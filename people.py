@@ -10,16 +10,16 @@ class People:
         self.x = x
         self.y = y
 
-    def fish():
+    def fish(self):
         #interaction with the fish / sea ?
         if self.catch < self.threshold:
             ...
 
-    def findNewDirection():
+    def findNewDirection(self):
         #interaction with fish / sea ?
         #sample fish population in a neighborhood
         #and select a new direction to move in.
 
         ...
 
-        
+
