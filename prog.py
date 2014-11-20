@@ -6,10 +6,12 @@ import scipy as sp
 
 class Sea:
     #lookup matrix/dict representation of the fishes
-
     def __init__(self, size_tup, fish_initial_count, population_total):
         self.size = size_tup
         self.grid = [ [ 0  for x in range(size_tup[1]) ] for y in range(size_tup[0]) ]
+        self.carrying_capacity = 1 + sp.random.rand(size_tup[0],size_tup[1]);
+        #Set the total carrying capacity to twice the size of initial population (this can be changed) /EÃƒâ€¦
+        self.carrying_capacity = self.carrying_capacity / sum(sum(self.carrying_capacity)) * 2 * population_total
         #exchange 0 for empty lsit or data struct for easy add/rem of objects
         self.fish_list = []
         remaining_fish = population_total
@@ -61,6 +63,10 @@ def move_fishes(sea):
         f.y = pos[1]
         sea.grid[f.x][f.y] = f
 
+def grow_fishes(sea):
+    for f in sea.fish_list:
+        f.grow(sea.carrying_capacity[f.x][f.y])
+
 def throw_net(person, fish):
     #person would fish until some threshold or heurestic is fulfilled
     #upon each throw of net a fraction of the fish population would be removed
@@ -74,3 +80,12 @@ if __name__ == '__main__':
     print(m)
     move_fishes(s)
     print(s.to_mat())
+    grow_fishes(s)
+    print(s.to_mat())
+    print(s.carrying_capacity)
+    for i in range(10):
+        grow_fishes(s)
+        move_fishes(s)
+
+    print(s.to_mat())
+
