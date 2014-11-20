@@ -13,11 +13,14 @@ class Sea:
         #exchange 0 for empty lsit or data struct for easy add/rem of objects
         self.fish_list = []
         remaining_fish = population_total
+        rand_dist  = sp.random.rand(fish_initial_count)
+        fish_dist = rand_dist / sum(rand_dist) * population_total
+
         for i in range(fish_initial_count):
             fish_x = sp.random.randint(size_tup[0])
             fish_y = sp.random.randint(size_tup[1])
             #random fish_size
-            fish_number = remaining_fish / ( fish_initial_count - i) * 2 * sp.random.rand()
+            fish_number = int(fish_dist[i])
             remaining_fish -= fish_number
             #add fisg to list and grid representation
             if isinstance(self.grid[fish_x][fish_y], Fish):
@@ -28,7 +31,7 @@ class Sea:
                 print(fish.count)
                 self.fish_list.append(fish)
                 self.grid[fish_x][fish_y] = fish
-
+        self.grid[fish_x][fish_y].add(remaining_fish)
     def to_mat(self):
         mat = sp.zeros( shape=self.size )
         for f in self.fish_list:
