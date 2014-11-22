@@ -8,11 +8,13 @@ class Sea:
     #lookup matrix/dict representation of the fishes
     def __init__(self, size_tup, fish_initial_count, population_total):
         self.size = size_tup
+	#Sea.grid will contain Fish objects later on!
         self.grid = [ [ 0  for x in range(size_tup[1]) ] for y in range(size_tup[0]) ]
         self.carrying_capacity = 1 + sp.random.rand(size_tup[0],size_tup[1]);
         #Set the total carrying capacity to twice the size of initial population (this can be changed) /EÃƒâ€¦
         self.carrying_capacity = self.carrying_capacity / sum(sum(self.carrying_capacity)) * 2 * population_total
         #exchange 0 for empty lsit or data struct for easy add/rem of objects
+	#A more easily iterable list of fishes.
         self.fish_list = []
         remaining_fish = population_total
         rand_dist  = sp.random.rand(fish_initial_count)
