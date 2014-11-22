@@ -1,8 +1,8 @@
-from fish import *
 from random import choice
-from people import *
 import matplotlib.pyplot as plt
 import scipy as sp
+from fish import *
+from people import *
 
 class Sea:
     #lookup matrix/dict representation of the fishes
@@ -25,7 +25,7 @@ class Sea:
                 self.grid[fish_x][fish_y].add(fish_number)
             else:
                 fish = Fish( fish_x, fish_y, fish_number )
-                print(fish.count)
+                #print(fish.count)
                 self.fish_list.append(fish)
                 self.grid[fish_x][fish_y] = fish
 
@@ -35,39 +35,8 @@ class Sea:
             x = f.x
             y = f.y
             v = f.count
-            print(v)
             mat[x,y] = v
         return mat
-
-def move_fishes(sea):
-    #Modified diffusion model to make sure only one fish is on same location
-    for f in sea.fish_list:
-        directions = [(-1,0), (0,-1), (0,1), (0,1)]
-        while True:
-            if len(directions) == 0:
-                pos = (f.x, f.y)
-                break
-            delta = choice(directions)
-            pos = ((f.x + delta[0]) % sea.size[0], (f.y + delta[1]) % sea.size[1])
-            if not isinstance(sea.grid[pos[0]][pos[1]], Fish):
-                break;
-            directions.remove(delta)
-
-        sea.grid[f.x][f.y] = 0
-        f.x = pos[0]
-        f.y = pos[1]
-        sea.grid[f.x][f.y] = f
-
-def throw_net(person, fish):
-    #person would fish until some threshold or heurestic is fulfilled
-    #upon each throw of net a fraction of the fish population would be removed
-    #and added to his catch
-    return 0
-
-if __name__ == '__main__':
-    print('test')
-    s = Sea((3,3),3,10)
-    m = s.to_mat()
-    print(m)
-    move_fishes(s)
-    print(s.to_mat())
+    def print_fish(self):
+        mat = self.to_mat()
+        print(mat)
