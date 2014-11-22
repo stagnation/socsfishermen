@@ -27,9 +27,11 @@ class Fish:
         return "%s fish at %s, %s" %(self.count, self.x, self.y)
 
     def fish_caught(self):
+        #respect integer valued fish?
         #this should probably be some lienar return rate in fish size.
         thresh = 3
-        catch = 0.1 * self.count if self.count > thresh else 0
+        fraction = 0.1
+        catch = fraction * self.count if self.count > thresh else 0
         self.count -= catch
         return catch
 
