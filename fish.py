@@ -4,11 +4,14 @@ class Fish:
         self.x = x
         self.y = y
         self.count = count
-        growth_rate = 1
+
 
     def grow(self, capacity):
+        growth_rate = 0.5
         growth = ( 1 - self.count / capacity )
         self.count += growth * growth_rate * self.count
+        self.count = self.count * (self.count>0)    #Do not allow negative amount of fish
+
 
     def net(self):
         caught_fish_count = 0.3 * self.count
@@ -25,7 +28,7 @@ class Fish:
 
     def fish_caught(self):
         #this should probably be some lienar return rate in fish size.
-        thresh = 10
+        thresh = 3
         catch = 0.1 * self.count if self.count > thresh else 0
         self.count -= catch
         return catch
