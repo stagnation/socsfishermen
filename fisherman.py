@@ -16,7 +16,6 @@ class Fisherman:
     def throw_net(self,local_fish_population):
         caught = local_fish_population *self.harvest_proportion
         caught = min(caught,self.maximum_yield)
-        #caught = min(local_fish_population,self.maximum_yield)   #For simple model
         self.catch +=caught;
         return caught
 

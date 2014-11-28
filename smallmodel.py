@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import scipy as sp
 import numpy as np
 import random as rnd
-from matplotlib2tikz import save as tikz_save
+#from matplotlib2tikz import save as tikz_save      #If export to tikz should be used
 
 
 from fisherman import *
@@ -13,7 +13,7 @@ class Sea:
     #The carrying_capacity defines the capacity for all tiles, (this can be a matrix if it should differ between tiles
     #Initial population_fraction is the how large fraction of the capacity the fish will initailly be
     #Similarly the harvest rate is either a vector one for each fisherman or a scalar for all fishermans
-    def __init__(self, size_tup, carrying_capacity, initial_population_fraction,g,n_fishermans,harvest_rates):
+    def __init__(self, size_tup, carrying_capacity, initial_population_fraction,g,n_fishermans,harvest_proportions):
         self.size = size_tup
         self.growth_rate = g
         if not isinstance(carrying_capacity,list):      #If the capacity is scalar make it a matrix
@@ -22,8 +22,8 @@ class Sea:
             self.carrying_capacity = carrying_capacity
         if not isinstance(initial_population_fraction,list):      #If the initial_population_fraction is scalar make it a matrix
             initial_population_fraction = sp.ones((size_tup[0],size_tup[1]))*initial_population_fraction
-        if not isinstance(harvest_rates,list):      #If the capacity is scalar make it a matrix
-            harvest_rates= sp.ones(n_fishermans)*harvest_rates
+        if not isinstance(harvest_proportions,list):      #If the capacity is scalar make it a matrix
+            harvest_proportions= sp.ones(n_fishermans)*harvest_proportions
 
 
         #calculate the current fish population for each tile
@@ -33,7 +33,7 @@ class Sea:
         for i in range(n_fishermans):
             x_pos = rnd.randint(0,self.size[0]-1)
             y_pos = rnd.randint(0,self.size[1]-1)
-            self.fishermans_list.append(Fisherman(x_pos,y_pos,harvest_rates[i],0)) #Waiting with treshold
+            self.fishermans_list.append(Fisherman(x_pos,y_pos,harvest_proportions[i],0)) #Waiting with treshold
 
 
 
@@ -67,22 +67,25 @@ class Sea:
 
 if __name__ == '__main__':
     days = 2000
-    num_of_rates = 200
+    num_of_rates = 100
     capacity = 1
-    growth_rate = 0.2;
+    growth_rate = 0.1;
     initial_pop = 0.8;
 
     catch = sp.zeros(num_of_rates)
     maximum_catch = 0;
     maximum_harvest = 0;
 
+    harvest_proportions = sp.arange(0,num_of_rates)/num_of_rates*2*growth_rate
+
+    # Simulate MSY
     for k in range(num_of_rates):
-        s = Sea((1,2),capacity,initial_pop,growth_rate,1,k/num_of_rates)
+        s = Sea((1,2),capacity,initial_pop,growth_rate,1,harvest_proportions[k])
         for day in range(days):
             s.nextDay(1)
         catch[k] = s.fishermans_list[0].catch/days
         if catch[k]>maximum_catch:
-            maximum_harvest = k/num_of_rates
+            maximum_harvest = harvest_proportions[k]
             maximum_catch = catch[k]
 
     #Run to find the dynamics of this population
@@ -97,8 +100,6 @@ if __name__ == '__main__':
         s.nextDay(1)
 
     #Plot the result
-
-
     plt.subplot(2,1,1)
     if fish_population[0][days-1]< fish_population[1][days-1]:
         plt.plot(sp.arange(0,days),fish_population[0], label='Fish dynamics at MSY')
@@ -113,11 +114,10 @@ if __name__ == '__main__':
     plt.legend()
 
     plt.subplot(2,1,2)
-    plt.plot(sp.arange(0,num_of_rates)/num_of_rates,catch)
-    plt.xlim(0,2*growth_rate)
+    plt.plot(harvest_proportions,catch)
     plt.ylabel('Average Catch')
     plt.xlabel('Harvest Proportion')
-    tikz_save('modeldynamic2.tikz',
-           figureheight = '\\figureheight',
-           figurewidth = '\\figurewidth')
+    #tikz_save('modeldynamic2.tikz',        #Exporting the figure to tikz format (latex image)
+    #       figureheight = '\\figureheight',
+    #       figurewidth = '\\figurewidth')
     plt.show()
