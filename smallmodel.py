@@ -2,6 +2,9 @@ import matplotlib.pyplot as plt
 import scipy as sp
 import numpy as np
 import random as rnd
+from matplotlib2tikz import save as tikz_save
+
+
 from fisherman import *
 
 #I define 1 fish unit to be the maximum amount of fish that can be caugt by a standard net.
@@ -30,7 +33,7 @@ class Sea:
         for i in range(n_fishermans):
             x_pos = rnd.randint(0,self.size[0]-1)
             y_pos = rnd.randint(0,self.size[1]-1)
-            self.fishermans_list.append(Fisherman(x_pos,y_pos,harvest_rates[i])) #Waiting with treshold
+            self.fishermans_list.append(Fisherman(x_pos,y_pos,harvest_rates[i],0)) #Waiting with treshold
 
 
 
@@ -63,34 +66,35 @@ class Sea:
 
 
 if __name__ == '__main__':
-
-
-    days = 500
-    num_of_rates = 80
+    days = 2000
+    num_of_rates = 200
+    capacity = 1
+    growth_rate = 0.2;
+    initial_pop = 0.8;
 
     catch = sp.zeros(num_of_rates)
     maximum_catch = 0;
     maximum_harvest = 0;
 
     for k in range(num_of_rates):
-        s = Sea((1,2),2000,0.51,0.1,1,0.05)
+        s = Sea((1,2),capacity,initial_pop,growth_rate,1,k/num_of_rates)
         for day in range(days):
-            s.nextDay(k)
+            s.nextDay(1)
         catch[k] = s.fishermans_list[0].catch/days
         if catch[k]>maximum_catch:
-            maximum_harvest = k
+            maximum_harvest = k/num_of_rates
             maximum_catch = catch[k]
 
     #Run to find the dynamics of this population
 
     fish_population = sp.zeros((2,days))
-    s = Sea((1,2),2000,0.51,0.1,1,0.05)
+    s = Sea((1,2),capacity,initial_pop,growth_rate,1,maximum_harvest)
 
     for day in range(days):
         tmp = s.fish_population
         fish_population[0][day] = tmp[0][0]
         fish_population[1][day] = tmp[0][1]
-        s.nextDay(maximum_harvest)
+        s.nextDay(1)
 
     #Plot the result
 
@@ -103,14 +107,17 @@ if __name__ == '__main__':
         plt.plot(sp.arange(0,days),fish_population[1], label='Fish dynamics at MSY')
         plt.plot(sp.arange(0,days),fish_population[0], label='Fish dynamic without harvest')
 
-    plt.ylim(0,2000)
+    plt.ylim(0,2*capacity)
     plt.xlabel('Time')
     plt.ylabel('Fish population size')
     plt.legend()
 
     plt.subplot(2,1,2)
-    plt.plot(sp.arange(0,num_of_rates),catch)
+    plt.plot(sp.arange(0,num_of_rates)/num_of_rates,catch)
+    plt.xlim(0,2*growth_rate)
     plt.ylabel('Average Catch')
-    plt.xlabel('Number of net throws')
+    plt.xlabel('Harvest Proportion')
+    tikz_save('modeldynamic2.tikz',
+           figureheight = '\\figureheight',
+           figurewidth = '\\figurewidth')
     plt.show()
-
