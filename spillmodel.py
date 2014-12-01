@@ -1,4 +1,4 @@
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import scipy as sp
 import numpy as np
 import random as rnd
@@ -17,14 +17,13 @@ class Sea:
         self.size = size_tup
         self.growth_rate = g
         if not isinstance(carrying_capacity,list):      #If the capacity is scalar make it a matrix
-            self.carrying_capacity = sp.ones((size_tup[0],size_tup[1]))*carrying_capacity
+            self.carrying_capacity = sp.ones(self.size)*carrying_capacity
         else:
             self.carrying_capacity = carrying_capacity
         if not isinstance(initial_population_fraction,list):      #If the initial_population_fraction is scalar make it a matrix
-            initial_population_fraction = sp.ones((size_tup[0],size_tup[1]))*initial_population_fraction
+            initial_population_fraction = sp.ones(self.size)*initial_population_fraction
         if not isinstance(harvest_proportions,list):      #If the capacity is scalar make it a matrix
             harvest_proportions= sp.ones(n_fishermans)*harvest_proportions
-
 
         #calculate the current fish population for each tile
         self.fish_population =  np.multiply(initial_population_fraction,self.carrying_capacity)
@@ -35,13 +34,11 @@ class Sea:
             y_pos = rnd.randint(0,self.size[1]-1)
             self.fishermans_list.append(Fisherman(x_pos,y_pos,harvest_proportions[i],0)) #Waiting with treshold
 
-
-
     def grow(self):
-        cometition_factor =  1 - np.divide(self.fish_population,self.carrying_capacity)
-        population_diffence = self.growth_rate*np.multiply(cometition_factor,self.fish_population)
+        competition_factor =  1 - np.divide(self.fish_population,self.carrying_capacity)
+        population_diffence = self.growth_rate*np.multiply(competition_factor,self.fish_population)
         self.fish_population = np.add(self.fish_population,population_diffence)
-        self.fish_population = np.maximum(self.fish_population,sp.zeros((self.size[0],self.size[1])))
+        self.fish_population = np.maximum(self.fish_population,sp.zeros(self.size))
 
     def harvest(self):
         for fisherman in self.fishermans_list:  #In turns the fishermans fish
@@ -49,19 +46,24 @@ class Sea:
             y = fisherman.y
             self.fish_population[x][y] -= fisherman.throw_net(self.fish_population[x][y])
 
-    def nextDay(self,n_throws):
+    def dayDynamics(self,n_throws,flip_prob=0):
         self.grow()
+        if sp.random.rand() < flip_prob:
+            #flip fish populaitons and see what happens
+            tmp = self.fish_population[0][0]
+            self.fish_population[0][0] = self.fish_population[0][1]
+            self.fish_population[0][1] = tmp
         for i in range(0,n_throws):
             self.harvest()
 
-
-    def print(self):
+    def __str__(self):
         print('Fishes: ')
         print(self.fish_population)
         print('Fishermans: ')
         for fisherman in self.fishermans_list:
             type(fisherman)
-            fisherman.print()
+            print(fisherman)
+        return ""
 
 
 
@@ -71,6 +73,7 @@ if __name__ == '__main__':
     capacity = 1
     growth_rate = 0.1;
     initial_pop = 0.8;
+    sailor_count = 1
 
     catch = sp.zeros(num_of_rates)
     maximum_catch = 0;
@@ -82,7 +85,16 @@ if __name__ == '__main__':
     for k in range(num_of_rates):
         s = Sea((1,2),capacity,initial_pop,growth_rate,1,harvest_proportions[k])
         for day in range(days):
-            s.nextDay(1)
+            if sp.random.rand() < 0.05:
+                #randomize fisherman positions
+                for f in s.fishermans_list:
+                    xold = f.x
+                    yold = f.y
+                    f.x =rnd.randint(0,s.size[0]-1)
+                    f.y =rnd.randint(0,s.size[1]-1)
+                    if (xold != f.x) and (yold != f.y):
+                        print(swap)
+            s.dayDynamics(1)
         catch[k] = s.fishermans_list[0].catch/days
         if catch[k]>maximum_catch:
             maximum_harvest = harvest_proportions[k]
@@ -90,23 +102,26 @@ if __name__ == '__main__':
 
     #Run to find the dynamics of this population
 
-    fish_population = sp.zeros((2,days))
-    s = Sea((1,2),capacity,initial_pop,growth_rate,1,maximum_harvest)
+    fish_pop_log = sp.zeros((2,days))
+    s = Sea((1,2),capacity,initial_pop,growth_rate,sailor_count,maximum_harvest)
+    print(s)
+    #second cell, 1 _2_ is for the sheltered fish population
+    #techniclly one at random of the two cells is sheltered...
 
     for day in range(days):
         tmp = s.fish_population
-        fish_population[0][day] = tmp[0][0]
-        fish_population[1][day] = tmp[0][1]
-        s.nextDay(1)
+        fish_pop_log[0][day] = tmp[0][0]
+        fish_pop_log[1][day] = tmp[0][1]
+        s.dayDynamics(1)
 
     #Plot the result
     plt.subplot(2,1,1)
-    if fish_population[0][days-1]< fish_population[1][days-1]:
-        plt.plot(sp.arange(0,days),fish_population[0], label='Fish dynamics at MSY')
-        plt.plot(sp.arange(0,days),fish_population[1], label='Fish dynamic without harvest')
+    if fish_pop_log[0][days-1]< fish_pop_log[1][days-1]:
+        plt.plot(sp.arange(0,days),fish_pop_log[0], label='Fish dynamics at MSY')
+        plt.plot(sp.arange(0,days),fish_pop_log[1], label='Fish dynamic without harvest')
     else:
-        plt.plot(sp.arange(0,days),fish_population[1], label='Fish dynamics at MSY')
-        plt.plot(sp.arange(0,days),fish_population[0], label='Fish dynamic without harvest')
+        plt.plot(sp.arange(0,days),fish_pop_log[1], label='Fish dynamics at MSY')
+        plt.plot(sp.arange(0,days),fish_pop_log[0], label='Fish dynamic without harvest')
 
     plt.ylim(0,2*capacity)
     plt.xlabel('Time')
