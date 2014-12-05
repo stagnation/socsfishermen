@@ -1,11 +1,9 @@
 class Fisherman:
-    def __init__(self, x, xmax , y, ymax, harvest_proportion=0.3, threshold=0):
+    def __init__(self, x , y, harvest_fraction=0.3, threshold=0):
         #not sensible default values at the moment
         self.x = x
         self.y = y
-        self.xmax = xmax
-        self.ymax = ymax
-        self.harvest_proportion = harvest_proportion
+        self.harvest_fraction = harvest_fraction
         self.catch = 0
         self.maximum_yield = 1
         self.perception_of_fishpopulation = []   #Sorted list according to precived population size
@@ -33,7 +31,7 @@ class Fisherman:
         self.perception_of_fishpopulation.append((x, y, site_fish_population))
 
     def throw_net(self, site_fish_population):
-        caught = site_fish_population *self.harvest_proportion
+        caught = site_fish_population *self.harvest_fraction
         caught = min(caught, self.maximum_yield)
         self.catch +=caught;
         if caught < self.threshold:  #If fisherman is unhappy he riskes to change fish location to best "known" or a random
@@ -44,9 +42,7 @@ class Fisherman:
         if len(self.perception_of_fishpopulation) > 0:
             moveto = self.perception_of_fishpopulation.pop(0)   #If he thinks the current location is best he will remain, is this correct???
             self.move(moveto[0], moveto[1])
-        else:
-            self.move(rnd.choice(range(xmax)), rnd.choice(range(ymax)))
 
 
     def __str__(self):
-        return('position x: ' + str(self.x) + ' position y: ' + str(self.y) + ' catch: ' + str(self.catch) + ' harvest rate: ' + str(self.harvest_proportion))
+        return('position x: ' + str(self.x) + ' position y: ' + str(self.y) + ' catch: ' + str(self.catch) + ' harvest rate: ' + str(self.harvest_fraction))

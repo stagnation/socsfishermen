@@ -36,7 +36,7 @@ class Sea:
         for i in range(n_fishermans):
             x_pos = rnd.randint(0, self.size[0]-1)
             y_pos = rnd.randint(0, self.size[1]-1)
-            sailor = Fisherman(x_pos, xmax, y_pos, ymax, harvest_proportions[i], 0)
+            sailor = Fisherman(x_pos, y_pos, harvest_proportions[i], 0)
             self.fishermans_list.append(sailor) #Waiting with treshold
 
     def grow(self):
@@ -94,23 +94,23 @@ if __name__ == '__main__':
 
     #Run to find the dynamics of this population
 
-    fish_population = sp.zeros((2, days))
+    fish_population_log = sp.zeros((2, days))
     s = Sea((1, 2), capacity, initial_pop, growth_rate, 1, maximum_harvest)
 
     for day in range(days):
         tmp = s.fish_population
-        fish_population[0][day] = tmp[0][0]
-        fish_population[1][day] = tmp[0][1]
+        fish_population_log[0][day] = tmp[0][0]
+        fish_population_log[1][day] = tmp[0][1]
         s.day_dynamics(1)
 
     #Plot the result
     ax1 = plt.subplot(2, 1, 1)
-    if fish_population[0][days-1]< fish_population[1][days-1]:
-        ax1.plot(sp.arange(0, days), fish_population[0], label='Fish dynamics at MSY')
-        ax1.plot(sp.arange(0, days), fish_population[1], label='Fish dynamic without harvest')
+    if fish_population_log[0][days-1]< fish_population_log[1][days-1]:
+        ax1.plot(sp.arange(0, days), fish_population_log[0], label='Fish dynamics at MSY')
+        ax1.plot(sp.arange(0, days), fish_population_log[1], label='Fish dynamic without harvest')
     else:
-        ax1.plot(sp.arange(0, days), fish_population[1], label='Fish dynamics at MSY')
-        ax1.plot(sp.arange(0, days), fish_population[0], label='Fish dynamic without harvest')
+        ax1.plot(sp.arange(0, days), fish_population_log[1], label='Fish dynamics at MSY')
+        ax1.plot(sp.arange(0, days), fish_population_log[0], label='Fish dynamic without harvest')
 
     ax1.set_ylim(0, 2*capacity)
     ax1.set_xlabel('Time')
@@ -126,5 +126,5 @@ if __name__ == '__main__':
     #       figureheight = '\\figureheight',
     #       figurewidth = '\\figurewidth')
     enlarge_limits()
-    plt.savefig("figs/example_figure %s %s %s.png" %(days, num_of_rates, sailor_count), bbox_inches='tight')
+#    plt.savefig("figs/example_figure %s %s %s.png" %(days, num_of_rates, sailor_count), bbox_inches='tight')
     plt.show()

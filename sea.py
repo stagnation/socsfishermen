@@ -1,83 +1,71 @@
-from random import choice
-import matplotlib.pyplot as plt
 import scipy as sp
-from fish import *
-from people import *
+import numpy as np
+import random as rnd
+from fisherman import *
+from fishes import *
 
 class Sea:
-    #lookup matrix/dict representation of the fishes
-    def __init__(self, size_tup, fish_initial_count, population_total):
+    #A sea consisting of tiles of fish each following a logistic growth
+    #The carrying_capacity defines the capacity for all tiles, (this can be a matrix if it should differ between tiles
+    #Initial population_fraction is the how large fraction of the capacity the fish will initailly be
+    #Similarly the harvest rate is either a vector one for each fisherman or a scalar for all fishermans
+    def __init__(self, size_tup = (1,1), n_fishermans = 1, harvest_fractions = 0.1, thresholds=0, growth_rate=0.1, initial_population_fraction = 0.5, carrying_capacity = 1, allee_effect = 0.1):
         self.size = size_tup
-	#Sea.grid will contain Fish objects later on!
-        self.grid = [ [ 0  for x in range(size_tup[1]) ] for y in range(size_tup[0]) ]
-        self.carrying_capacity = 1 + sp.random.rand(size_tup[0],size_tup[1]);
-        #Set the total carrying capacity to twice the size of initial population (this can be changed)
-        self.carrying_capacity = self.carrying_capacity / self.carrying_capacity.sum() * 2 * population_total
-        #exchange 0 for empty lsit or data struct for easy add/rem of objects
-	#A more easily iterable list of fishes.
-        self.fish_list = []
-        remaining_fish = population_total
-        #this needs some tweaking to make sure there are no mega schools added
-        #with the remaining fish at the end.
-        rand_dist  = sp.random.rand(fish_initial_count)
-        fish_dist = rand_dist / sum(rand_dist) * population_total
+        if not isinstance(carrying_capacity, list):                  #If the capacity is scalar make it a matrix
+            self.carrying_capacity = sp.ones(self.size)*carrying_capacity
+        else:
+            self.carrying_capacity = carrying_capacity
 
-        for i in range(fish_initial_count):
-            fish_x = sp.random.randint(size_tup[0])
-            fish_y = sp.random.randint(size_tup[1])
-            #random fish_size
-            fish_number = int(fish_dist[i])
-            remaining_fish -= fish_number
-            #add fisg to list and grid representation
-            if isinstance(self.grid[fish_x][fish_y], Fish):
-                #handle this better, a list of all schools is prob better
-                self.grid[fish_x][fish_y].add(fish_number)
-            else:
-                fish = Fish( fish_x, fish_y, fish_number )
-                #print(fish.count)
-                self.fish_list.append(fish)
-                self.grid[fish_x][fish_y] = fish
-        self.grid[fish_x][fish_y].add(remaining_fish)
-    def to_mat(self):
-        mat = sp.zeros( shape=self.size )
-        for f in self.fish_list:
-            x = f.x
-            y = f.y
-            v = f.count
-            mat[x,y] = v
-        return mat
+        self.allee_effect = allee_effect
 
-    def print_fish(self):
-        mat = self.to_mat()
-        print(mat)
-    def grow_fishes(self):
-        for f in self.fish_list:
-            f.grow(sea.carrying_capacity[f.x][f.y])
+        if not isinstance(initial_population_fraction, list):        #If the initial_population_fraction is scalar make it a matrix
+            initial_population_fraction = sp.ones(self.size)*initial_population_fraction
+        if not isinstance(harvest_fractions, list):                #If the harvest_fractions is scalar make it a matrix
+            harvest_fractions= sp.ones(n_fishermans)*harvest_fractions
+        if not isinstance(thresholds, list):                         #If the thresholds is scalar make it a matrix
+            thresholds= sp.ones(n_fishermans)*thresholds
 
-    def fish_population_size(self):
-        popul_size = 0
-        for f in self.fish_list:
-            popul_size += f.count
-        return popul_size
+        #Initiate the fishes
+        self.fishes =  Fishes(np.multiply(initial_population_fraction, self.carrying_capacity),growth_rate)
+
+        self.fishermans_list = []
+        for i in range(n_fishermans):
+            x_pos = rnd.choice(range(self.size[0]))
+            y_pos = rnd.choice(range(self.size[1]))
+            sailor = Fisherman(x_pos, y_pos, harvest_fractions[i], thresholds[i])
+            self.fishermans_list.append(sailor)
+
+    def harvest(self):
+        for fisherman in self.fishermans_list:  #In turns the fishermans fish
+            x = fisherman.x
+            y = fisherman.y
+            self.fishes.population[x][y] -= fisherman.throw_net(self.fishes.population[x][y])
+
+    def share_knowledge(self):  #Fisherman - Fisherman interation lies and stuff may be implemented
+
+        return None
+
+    def explore(self, radius, uncertainty):
+        for fisherman in self.fishermans_list:  #In turns the fishermans explore a given radius
+            x_to_learn = range(fisherman.x-radius, fisherman.x+radius)
+            y_to_learn = range(fisherman.y-radius, fisherman.y+radius)
+            for x in x_to_learn:
+                x = x%self.size[0]
+                for y in y_to_learn:
+                    y = y%self.size[1]
+                    precived_population = (1 + uncertainty*(sp.rand()-0.5))*self.fishes.population[x][y]
+                    fisherman.gain_knowledge(x, y, precived_population)
 
 
-    def move_fishes(self):
-        #Modified diffusion model to make sure only one fish is on same location
-        for f in self.fish_list:
-            directions = [(-1,0), (0,-1), (0,1), (1,0)]
-            while True:
-                if len(directions) == 0:
-                    pos = (f.x, f.y)
-                    break
-                delta = choice(directions)
-                pos = ((f.x + delta[0]) % self.size[0], (f.y + delta[1]) % self.size[1])
-                if not isinstance(self.grid[pos[0]][pos[1]], Fish):
-                    break;
-                directions.remove(delta)
+    def day_dynamics(self):
+        self.fishes.grow(self.allee_effect,self.carrying_capacity)
+        self.explore(1, 0.1)
+        self.harvest()
 
-            self.grid[f.x][f.y] = 0
-            f.x = pos[0]
-            f.y = pos[1]
-            self.grid[f.x][f.y] = f
-
-##########END OF CLASS
+    def __str__(self):
+        self.fishes.__str__()
+        print('Fishermans: ')
+        for fisherman in self.fishermans_list:
+            type(fisherman)
+            print(fisherman)
+        return ""
