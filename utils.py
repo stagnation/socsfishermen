@@ -17,7 +17,7 @@ def neighborhood_tuples(x, y, side_length):
             tup_list.append( (int(x + i), int(y + j) ) )
     return tup_list
 def enlarge_limits(ax=None, s=0.03):
-    #courtesy of Pontus Granström
+    #courtesy of Pontus Granstrom
         if not ax:
             ax = plt.gca()
         xmin, xmax = ax.get_xlim()
@@ -26,6 +26,17 @@ def enlarge_limits(ax=None, s=0.03):
         dy = ymax - ymin
         ax.set_xlim([xmin - s*dx, xmax + s*dx])
         ax.set_ylim([ymin - s*dy, ymax + s*dy])
+
+def random_like(mat):
+    return sp.random(mat.shape)
+
+
+#def fish_sum(fishes):
+#    r = 0
+#    for x in range(len(fishes)):
+#        for y in range(len(fishes[0]):
+#            sum += fishes.population[x][y]
+
 
 
 if __name__ == '__main__':

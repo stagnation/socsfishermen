@@ -16,7 +16,7 @@ from utils import *
 from sea import *
 
 if __name__ == '__main__':
-    num_of_rates = 200
+    num_of_rates = 100
     days = 2000
 
     xsize = 1
@@ -24,8 +24,8 @@ if __name__ == '__main__':
     num_fishermans = 1
     initial_pop = 0.8
     capacity = 1
-    allee_effect = 0.1;
-    growth_rate = 1*allee_effect
+    allee_effect = 0.1
+    growth_rate = 0.4
 
     harvest_fractions = sp.arange(0, num_of_rates)/num_of_rates*0.2
 
@@ -37,24 +37,25 @@ if __name__ == '__main__':
     harvest_fractions_at_decay = 0
 
     for k in range(num_of_rates):
-        s = Sea((xsize, ysize), num_fishermans , harvest_fractions[k] , thresholds, growth_rate, initial_pop, capacity, allee_effect)
+        s = Sea((xsize, ysize), num_fishermans , harvest_fractions[k] , thresholds, 0,  1, growth_rate, initial_pop, capacity, allee_effect)
         for day in range(days):
             s.day_dynamics()
-        catch_log[k] = s.fishermans_list[0].catch/days;
+        catch_log[k] = s.fishermans_list[0].catch[1]/days;
         if maximum_catch < catch_log[k]:
             maximum_catch = catch_log[k]
             maximum_harvest_fraction = harvest_fractions[k]
         if abs(catch_log[k]-catch_log[k-1]) > 0.5*catch_log[k-1]:
             harvest_fractions_at_decay = harvest_fractions[k]
             harvest_fractions_before_decay = harvest_fractions[k-1]
+        print(k)
 
     #Run to find the dynamics of intresting harvest_propotions
     intrest_harvest_fractions = [0, maximum_harvest_fraction, harvest_fractions_at_decay, harvest_fractions_before_decay]
     fish_population_log = sp.zeros((4,days))
     for k in range(4):
-        s = Sea((xsize, ysize), num_fishermans , intrest_harvest_fractions[k] , thresholds, growth_rate, initial_pop, capacity, allee_effect)
+        s = Sea((xsize, ysize), num_fishermans , intrest_harvest_fractions[k] ,  thresholds, 0,  1, growth_rate, initial_pop, capacity, allee_effect)
         for day in range(days):
-            tmp = s.fishes.population
+            tmp = s.fishes_list[0].population
             fish_population_log[k][day] = tmp[0][0]
             s.day_dynamics()
 
