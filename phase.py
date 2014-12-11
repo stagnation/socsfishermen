@@ -44,7 +44,7 @@ if __name__ == '__main__':
        #             s.day_dynamics()
        #         res[a, h, t, 0] = s.fishes.population.sum()
        #         res[a, h, t, 1] = sum( f.catch for f in s.fishermans_list )
-       
+
 
     #In lieu of loop over allee
     #res = [ 0 for a in allees]
@@ -57,22 +57,21 @@ if __name__ == '__main__':
         for day in range(days):
             s.day_dynamics()
         return s.fishes_list[0].population.sum(), sum( f.catch[1] for f in s.fishermans_list )
-        
-        
+
+
     harvestmat, thresholdmat = sp.meshgrid(harvest_fractions, thresholds)
     res = innerloop(allee, harvestmat, thresholdmat)
     fig = plt.figure()
-    ax = fig.add_subplot(111, projections='3d')
-    ax.plotsurface(harvestmat, thresholdmat, res[a], rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+    ax = fig.add_subplot(111, projection='3d')
+    ax.plot_surface(harvestmat, thresholdmat, res[a], rstride=1, cstride=1, cmap=plt.cm.coolwarm, linewidth=0, antialiased=False)
     ax.set_xlabel("harvest rate")
     ax.set_ylabel("threshold")
     ax.set_zlabel("final fish population")
     plt.show()
-    
-    
-    
+
+
+
     #Plot the result
-    print res
 
     #tikz_save('modeldynamic2.tikz',        #Exporting the figure to tikz format (latex image)
     #       figureheight = '\\figureheight',
