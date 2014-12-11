@@ -7,6 +7,7 @@
 # Created:     05-12-2014
 #-------------------------------------------------------------------------------
 
+from __future__ import division
 import matplotlib.pyplot as plt
 import scipy as sp
 import numpy as np
@@ -25,7 +26,9 @@ if __name__ == '__main__':
     initial_pop = 0.8
     capacity = 1
     allee_effect = 0.1
-    growth_rate = 0.4
+    growth_rate = 0.2
+    greeds = 0
+    fish_species = 1
 
     harvest_fractions = sp.arange(0, num_of_rates)/num_of_rates*0.2
 
@@ -35,9 +38,10 @@ if __name__ == '__main__':
     maximum_catch = 0
     maximum_harvest_fraction = 0
     harvest_fractions_at_decay = 0
+    harvest_fractions_before_decay = -sp.inf
 
     for k in range(num_of_rates):
-        s = Sea((xsize, ysize), num_fishermans , harvest_fractions[k] , thresholds, 0,  1, growth_rate, initial_pop, capacity, allee_effect)
+        s = Sea((xsize, ysize), num_fishermans , harvest_fractions[k] , thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee_effect)
         for day in range(days):
             s.day_dynamics()
         catch_log[k] = s.fishermans_list[0].catch[1]/days;
@@ -53,7 +57,7 @@ if __name__ == '__main__':
     intrest_harvest_fractions = [0, maximum_harvest_fraction, harvest_fractions_at_decay, harvest_fractions_before_decay]
     fish_population_log = sp.zeros((4,days))
     for k in range(4):
-        s = Sea((xsize, ysize), num_fishermans , intrest_harvest_fractions[k] ,  thresholds, 0,  1, growth_rate, initial_pop, capacity, allee_effect)
+        s = Sea((xsize, ysize), num_fishermans , intrest_harvest_fractions[k] ,  thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee_effect)
         for day in range(days):
             tmp = s.fishes_list[0].population
             fish_population_log[k][day] = tmp[0][0]

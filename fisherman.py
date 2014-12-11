@@ -12,7 +12,8 @@ class Fisherman:
         self.maximum_yield = 1 #we don't use this yet
         self.price_perception = price_perception
         self.threshold = threshold
-        self.perception_of_fishpopulation_value = [((x,y),0,0)]  #List of the estimation made by the fisherman of which location and fish spice would  yeild a certain results
+        self.perception_of_fishpopulation_value = [((x,y),0,0)]  
+        #List of the estimation made by the fisherman of which location and fish spice would  yeild a certain results
 
     def move(self, pos_tup):
         self.x = pos_tup[0]

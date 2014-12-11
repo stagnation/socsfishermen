@@ -9,7 +9,8 @@ class Sea:
     #The carrying_capacity defines the capacity for all tiles, (this can be a matrix if it should differ between tiles
     #Initial population_fraction is the how large fraction of the capacity the fish will initailly be
     #Similarly the harvest rate is either a vector one for each fisherman or a scalar for all fishermans
-    def __init__(self, size_tup = (1,1), n_fishermans = 1, harvest_fractions = 0.1, thresholds=0, greeds=0, fish_species = 1, growth_rate=0.1, initial_population_fraction = 0.5, carrying_capacity = 1, allee_effect = 0.1):
+    def __init__(self, size_tup, n_fishermans, harvest_fractions, thresholds, greeds, fish_species, growth_rate, initial_population_fraction, carrying_capacity, allee_effect):
+        
         self.size = size_tup
         if not isinstance(carrying_capacity, list):                  #If the capacity is scalar make it a matrix
             self.carrying_capacity = sp.ones(self.size)*carrying_capacity
@@ -91,3 +92,16 @@ class Sea:
             type(fisherman)
             print(fisherman)
         return ""
+        
+        
+"""        print("size", size_tup)
+        print("num sail", n_fishermans)
+        print("harvest", harvest_fractions)
+        print("threshold", thresholds)
+        print("greeds", greeds)
+        print("fish s",fish_species)
+        print("g rate",growth_rate)
+        print("pop0", initial_population_fraction)
+        print("carry", carrying_capacity)
+        print("allee", allee_effect)
+        """        

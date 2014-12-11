@@ -3,7 +3,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import scipy as sp
 import random as rnd
 from utils import *
-#import sciy.vectorize
+from scipy import vectorize
 #from matplotlib2tikz import save as tikz_save      #If export to tikz should be used
 
 from sea import *
@@ -22,9 +22,11 @@ if __name__ == '__main__':
     #cap_mat += 0.1 * ( sp.random.random(cap_mat.shape) - 0.5 )
     allee_effect = 0.1;
     growth_rate = 0.5
+    threshs = 0
+    greeds = 0
 
     intial_price = (1,2,1)
-    market_demand = (0.1,0.5,0.1)
+    market_demand = (0.1,0.4,0.1)
 
     harvest_fractions = 0.18
 
@@ -34,7 +36,7 @@ if __name__ == '__main__':
     fisherman_wealth_log = sp.zeros((num_fishermans, days))
     price_log = sp.zeros((num_fish_species,days))
 
-    s = Sea((xsize, ysize), num_fishermans, harvest_fractions, 0, 0, num_fish_species, growth_rate, initial_pop, cap_mat, allee)
+    s = Sea((xsize, ysize), num_fishermans, harvest_fractions, threshs, greeds, num_fish_species, growth_rate, initial_pop, cap_mat, allee)
     market = Market(intial_price, market_demand)
 
     for day in range(days):
