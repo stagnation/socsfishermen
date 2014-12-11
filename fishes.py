@@ -6,15 +6,15 @@ class Fishes:
     #Initial population_fraction is the how large fraction of the capacity the fish will initailly be
     #Similarly the harvest rate is either a vector one for each fisherman or a scalar for all fishermans
 
-    def __init__(self, initial_populations, growth_rate=0.1):
+    def __init__(self, initial_populations, growth_rate):
         self.growth_rate = growth_rate
         self.population =  initial_populations
         self.size = initial_populations.shape
 
-    def grow(self,allee_effect,carrying_capacity):
+    def grow(self,carrying_capacity):
         cometition_factor =  1 - sp.divide(self.population, carrying_capacity)
-        logistic_growth_factor = self.growth_rate*sp.multiply(cometition_factor, self.population)
-        self.population = self.population * sp.exp( logistic_growth_factor)#ricker
+      #  logistic_growth_factor = self.growth_rate*(cometition_factor, self.population)
+        self.population = self.population * sp.exp( self.growth_rate*cometition_factor)#ricker
         self.population = sp.maximum(self.population, sp.zeros(self.size))
 
         #Numerical errors trying to compensate...

@@ -17,10 +17,8 @@ if __name__ == '__main__':
     num_fish_species = 3
     initial_pop = 0.5
     capacity = 1
-    allee = 0.1
     cap_mat = capacity * sp.ones((xsize,ysize))
     #cap_mat += 0.1 * ( sp.random.random(cap_mat.shape) - 0.5 )
-    allee_effect = 0.1;
     growth_rate = 0.5
     threshs = 0
     greeds = 0
@@ -36,7 +34,7 @@ if __name__ == '__main__':
     fisherman_wealth_log = sp.zeros((num_fishermans, days))
     price_log = sp.zeros((num_fish_species,days))
 
-    s = Sea((xsize, ysize), num_fishermans, harvest_fractions, threshs, greeds, num_fish_species, growth_rate, initial_pop, cap_mat, allee)
+    s = Sea((xsize, ysize), num_fishermans, harvest_fractions, threshs, greeds, num_fish_species, growth_rate, initial_pop, cap_mat)
     market = Market(intial_price, market_demand)
 
     for day in range(days):

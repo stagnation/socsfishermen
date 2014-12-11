@@ -9,8 +9,8 @@ class Sea:
     #The carrying_capacity defines the capacity for all tiles, (this can be a matrix if it should differ between tiles
     #Initial population_fraction is the how large fraction of the capacity the fish will initailly be
     #Similarly the harvest rate is either a vector one for each fisherman or a scalar for all fishermans
-    def __init__(self, size_tup, n_fishermans, harvest_fractions, thresholds, greeds, fish_species, growth_rate, initial_population_fraction, carrying_capacity, allee_effect):
-        
+    def __init__(self, size_tup, n_fishermans, harvest_fractions, thresholds, greeds, fish_species, growth_rate, initial_population_fraction, carrying_capacity ):
+
         self.size = size_tup
         if not isinstance(carrying_capacity, list):                  #If the capacity is scalar make it a matrix
             self.carrying_capacity = sp.ones(self.size)*carrying_capacity
@@ -24,8 +24,6 @@ class Sea:
             self.carrying_capacity = sp.ones(self.size)
             self.carrying_capacity = sp.tile(self.carrying_capacity,(fish_species,1,1))
 
-
-        self.allee_effect = allee_effect
 
         if not isinstance(initial_population_fraction, list):        #If the initial_population_fraction is scalar make it a matrix
             initial_population_fraction = sp.ones(self.size)*initial_population_fraction
@@ -78,8 +76,9 @@ class Sea:
 
     def day_dynamics(self):
         #(fishes.grow(self.allee_effect,self.carrying_capacity) for fishes in self.fishes_list)
+
         for specie ,f in enumerate(self.fishes_list):
-            f.grow(self.allee_effect, self.carrying_capacity[specie])
+            f.grow(self.carrying_capacity[specie])
         self.explore(1, 0)
         self.harvest()
 
@@ -92,8 +91,8 @@ class Sea:
             type(fisherman)
             print(fisherman)
         return ""
-        
-        
+
+
 """        print("size", size_tup)
         print("num sail", n_fishermans)
         print("harvest", harvest_fractions)
@@ -104,4 +103,4 @@ class Sea:
         print("pop0", initial_population_fraction)
         print("carry", carrying_capacity)
         print("allee", allee_effect)
-        """        
+        """
