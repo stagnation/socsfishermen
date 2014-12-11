@@ -14,14 +14,11 @@ class Fishes:
     def grow(self,allee_effect,carrying_capacity):
         cometition_factor =  1 - sp.divide(self.population, carrying_capacity)
         logistic_growth_factor = self.growth_rate*sp.multiply(cometition_factor, self.population)
-        allee_factor = self.population - allee_effect
-        population_diffence = sp.multiply(logistic_growth_factor, allee_factor)
-        self.population = sp.add(self.population, population_diffence)
-        #self.population = self.population * sp.exp( logistic_growth_factor * allee_factor ) #ricker
+        self.population = self.population * sp.exp( logistic_growth_factor)#ricker
         self.population = sp.maximum(self.population, sp.zeros(self.size))
 
         #Numerical errors trying to compensate...
-        extinction_limit = 1e-5
+        extinction_limit = 1e-3
         self.population = self.population * (self.population>extinction_limit)
 
     def __str__(self):

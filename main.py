@@ -21,10 +21,10 @@ if __name__ == '__main__':
     cap_mat = capacity * sp.ones((xsize,ysize))
     #cap_mat += 0.1 * ( sp.random.random(cap_mat.shape) - 0.5 )
     allee_effect = 0.1;
-    growth_rate = 1
+    growth_rate = 0.5
 
     intial_price = (1,2,1)
-    market_demand = (0.1,0.4,0.1)
+    market_demand = (0.1,0.5,0.1)
 
     harvest_fractions = 0.18
 
