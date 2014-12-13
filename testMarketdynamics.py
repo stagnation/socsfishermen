@@ -7,7 +7,7 @@ from utils import *
 #from matplotlib2tikz import save as tikz_save      #If export to tikz should be used
 
 from sea import *
-from market import *
+from marketAlt import *
 from plotTool import *
 
 if __name__ == '__main__':
@@ -18,23 +18,25 @@ if __name__ == '__main__':
     initial_pop = 0.5
     capacity = 1
     allee = 0.1
-    cap_mat = capacity * sp.ones((xsize,ysize))
+    cap_mat = capacity * sp.ones((num_fish_species,xsize,ysize))
+    cap_mat[1] = sp.array([[0.5, 1e-6],[0.5,1e-6]])
     #cap_mat += 0.1 * ( sp.random.random(cap_mat.shape) - 0.5 )
     allee_effect = 0.1;
-    growth_rate = 1
+    growth_rate = 0.3
+    move_each_day = False
 
     intial_price = (1,2,1)
-    market_demand = (0.1,0.4,0.1)
+    market_demand = (0.12,0.4,0.12)
 
-    harvest_fractions = 0.18
+    harvest_fractions = 0.3
 
-    days = 200
+    days = 1000
 
     fish_population_log = sp.zeros((num_fish_species,xsize*ysize, days))
     fisherman_wealth_log = sp.zeros((num_fishermans, days))
     price_log = sp.zeros((num_fish_species,days))
 
-    s = Sea((xsize, ysize), num_fishermans, harvest_fractions, 0, 0, num_fish_species, growth_rate, initial_pop, cap_mat, allee)
+    s = Sea((xsize, ysize), num_fishermans, harvest_fractions, 0, 0, num_fish_species, growth_rate, initial_pop, cap_mat, allee, move_each_day)
     market = Market(intial_price, market_demand)
 
     for day in range(days):
@@ -69,7 +71,7 @@ if __name__ == '__main__':
         plt.semilogy(sp.arange(0, days), price_log[i], label = 'Specie ' + str(i+1))
     plt.xlabel('Time')
     plt.ylabel('Price')
-    plt.ylim(0.1,10)
+    plt.ylim(1,10500)
     plt.legend()
 
     #tikz_save('modeldynamic2.tikz',        #Exporting the figure to tikz format (latex image)
