@@ -11,10 +11,10 @@ class Fishes:
         self.population =  initial_populations
         self.size = initial_populations.shape
 
-    def grow(self,carrying_capacity):
+    def grow(self,allee,carrying_capacity):
         cometition_factor =  1 - sp.divide(self.population, carrying_capacity)
-      #  logistic_growth_factor = self.growth_rate*(cometition_factor, self.population)
-        self.population = self.population * sp.exp( self.growth_rate*cometition_factor)#ricker
+        self.population += self.growth_rate*sp.multiply(self.population,cometition_factor)   #Logitic growth                                                                                    #   Logistic
+      #  self.population = self.population * sp.exp( self.growth_rate*cometition_factor)#ricker
         self.population = sp.maximum(self.population, sp.zeros(self.size))
 
         #Numerical errors trying to compensate...
