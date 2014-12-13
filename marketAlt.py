@@ -7,10 +7,9 @@
 import scipy as sp
 class Market:
     max_price = 1e2
-    def __init__(self, initial_price,market_demand):
+    def __init__(self, initial_price):
         self.price = initial_price
-        self.market_demand = market_demand
-        self.num_goods = len(market_demand)
+        self.num_goods = len(initial_price)
 
     def sell(self, fisherman_list):
         total_trade = sp.zeros(self.num_goods)

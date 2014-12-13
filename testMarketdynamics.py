@@ -26,7 +26,7 @@ if __name__ == '__main__':
     move_each_day = False
 
     intial_price = (1,2,1)
-    market_demand = (0.12,0.4,0.12)
+    #market_demand = (0.12,0.4,0.12) not used with the other market dynamics
 
     harvest_fractions = 0.3
 
@@ -37,7 +37,7 @@ if __name__ == '__main__':
     price_log = sp.zeros((num_fish_species,days))
 
     s = Sea((xsize, ysize), num_fishermans, harvest_fractions, 0, 0, num_fish_species, growth_rate, initial_pop, cap_mat, allee, move_each_day)
-    market = Market(intial_price, market_demand)
+    market = Market(intial_price)
 
     for day in range(days):
         s.day_dynamics()
