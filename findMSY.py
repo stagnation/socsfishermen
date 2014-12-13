@@ -12,12 +12,12 @@ import matplotlib.pyplot as plt
 import scipy as sp
 import numpy as np
 import random as rnd
-from matplotlib2tikz import save as tikz_save
+#from matplotlib2tikz import save as tikz_save
 from utils import *
 from sea import *
 
 if __name__ == '__main__':
-    num_of_rates = 100
+    num_of_rates = 50
     days = 1000
 
     xsize = 1
@@ -25,9 +25,11 @@ if __name__ == '__main__':
     num_fishermans = 1
     initial_pop = 0.8
     capacity = 1
-    growth_rate = 0.2
+    growth_rate = 0.5
     greeds = 0
     fish_species = 1
+    allee = sp.inf
+    move_each_day = False
 
     harvest_fractions = sp.arange(0, num_of_rates)/num_of_rates
 
@@ -38,7 +40,7 @@ if __name__ == '__main__':
     maximum_harvest_fraction = 0
 
     for k in range(num_of_rates):
-        s = Sea((xsize, ysize), num_fishermans , harvest_fractions[k] , thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity,0)
+        s = Sea((xsize, ysize), num_fishermans , harvest_fractions[k] , thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee, move_each_day)
         for day in range(days):
             s.day_dynamics()
         catch_log[k] = s.fishermans_list[0].catch[1]/days;
@@ -53,14 +55,14 @@ if __name__ == '__main__':
     fish_population_log = sp.zeros((4,days))
     initial_pop = 0.8
     for k in range(2):
-        s = Sea((xsize, ysize), num_fishermans , intrest_harvest_fractions[k] ,  thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity,0)
+        s = Sea((xsize, ysize), num_fishermans , intrest_harvest_fractions[k] ,  thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee, move_each_day)
         for day in range(days):
             tmp = s.fishes_list[0].population
             fish_population_log[k][day] = tmp[0][0]
             s.day_dynamics()
     initial_pop = 0.2
     for k in range(2,4):
-        s = Sea((xsize, ysize), num_fishermans , intrest_harvest_fractions[k-2] ,  thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity,0)
+        s = Sea((xsize, ysize), num_fishermans , intrest_harvest_fractions[k-2] ,  thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee, move_each_day)
         for day in range(days):
             tmp = s.fishes_list[0].population
             fish_population_log[k][day] = tmp[0][0]
@@ -81,9 +83,9 @@ if __name__ == '__main__':
     ax2.plot(harvest_fractions,catch_log)
     ax2.set_ylabel('Average Catch')
     ax2.set_xlabel('Harvest fraction')
-    tikz_save('modeldynamic2.tikz',        #Exporting the figure to tikz format (latex image)
-           figureheight = '\\figureheight',
-           figurewidth = '\\figurewidth')
+    #tikz_save('modeldynamic2.tikz',        #Exporting the figure to tikz format (latex image)
+    #       figureheight = '\\figureheight',
+    #       figurewidth = '\\figurewidth')
     enlarge_limits()
     #plt.savefig("figs/example_figure %s %s %s.png" %(days, num_of_rates, sailor_count), bbox_inches='tight')
     plt.show()

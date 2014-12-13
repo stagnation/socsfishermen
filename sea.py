@@ -9,8 +9,8 @@ class Sea:
     #The carrying_capacity defines the capacity for all tiles, (this can be a matrix if it should differ between tiles
     #Initial population_fraction is the how large fraction of the capacity the fish will initailly be
     #Similarly the harvest rate is either a vector one for each fisherman or a scalar for all fishermans
-    def __init__(self, size_tup, n_fishermans, harvest_fractions, thresholds, greeds, fish_species, growth_rate, initial_population_fraction, carrying_capacity, allee_effect):
-        
+    def __init__(self, size_tup, n_fishermans, harvest_fractions, thresholds, greeds, fish_species, growth_rate, initial_population_fraction, carrying_capacity, allee_effect, move_each_day):
+        self.move_each_day = move_each_day
         self.size = size_tup
         if not isinstance(carrying_capacity, list):                  #If the capacity is scalar make it a matrix
             self.carrying_capacity = sp.ones(self.size)*carrying_capacity
@@ -80,9 +80,12 @@ class Sea:
     def day_dynamics(self):
         #(fishes.grow(self.allee_effect,self.carrying_capacity) for fishes in self.fishes_list)
         for specie ,f in enumerate(self.fishes_list):
-            f.grow(self.allee_effect, self.carrying_capacity[specie])
+            f.grow(self.carrying_capacity[specie], self.allee_effect)
         self.explore(1, 0)
         self.harvest()
+        if self.move_each_day:
+            for f in self.fishermans_list:
+                f.move_to_best()
 
     def __str__(self):
         for fishes in self.fishes_list:
@@ -92,17 +95,23 @@ class Sea:
         for fisherman in self.fishermans_list:
             type(fisherman)
             print(fisherman)
+        print("carry", self.carrying_capacity)    
+        print("********")
+        print("params: ")
+        print("size", self.size)
+        print("num sail", len(self.fishermans_list))
+        print("harvest", [f.harvest_fraction for f in self.fishermans_list])
+        print("threshold", [f.threshold for f in self.fishermans_list])
+        print("greeds", [f.greed for f in self.fishermans_list])
+        print("fish s", len(self.fishes_list))
+        print("g rate", [f.growth_rate for f in self.fishes_list])
+        #print("pop0", self.initial_population_fraction)
+
+        print("allee", self.allee_effect)   
+        
+
+            
         return ""
         
         
-"""        print("size", size_tup)
-        print("num sail", n_fishermans)
-        print("harvest", harvest_fractions)
-        print("threshold", thresholds)
-        print("greeds", greeds)
-        print("fish s",fish_species)
-        print("g rate",growth_rate)
-        print("pop0", initial_population_fraction)
-        print("carry", carrying_capacity)
-        print("allee", allee_effect)
-        """        
+  

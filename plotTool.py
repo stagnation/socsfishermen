@@ -1,13 +1,8 @@
 import scipy as sp
 import matplotlib.pyplot as plt
+from utils import *
 extinction_limit =1e-5
 
-def is_extinct(fish_population):
-    days = fish_population.shape[0]
-    for day in range(days):
-        if fish_population[day]<extinction_limit:
-            return day+1
-    return days
 
 def plot_fishpop(fish_populations):
     avgplot = None
