@@ -71,7 +71,6 @@ if __name__ == '__main__':
         plt.semilogy(sp.arange(0, days), price_log[i], label = 'Specie ' + str(i+1))
     plt.xlabel('Time')
     plt.ylabel('Price')
-    plt.ylim(1,10500)
     plt.legend()
 
     #tikz_save('modeldynamic2.tikz',        #Exporting the figure to tikz format (latex image)

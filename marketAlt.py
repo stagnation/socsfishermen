@@ -6,9 +6,8 @@
 #-------------------------------------------------------------------------------
 import scipy as sp
 class Market:
-    max_price = 1e2
     def __init__(self, initial_price):
-        self.price = initial_price
+        self.price = sp.array(initial_price)
         self.num_goods = len(initial_price)
 
     def sell(self, fisherman_list):
@@ -24,13 +23,14 @@ class Market:
     def set_price_zero(self,goods):
         self.price[goods] = 0
 
-    def price_responce(self, total_trade): #P = 1/(Q+eps)^pow
+    def price_responce(self, total_trade): #P = (eps/(Q+eps))^pow
         eps = 1e-3
         my = 0.05
         pow = 2
-        previous_trade = sp.divide(1,sp.power(self.price,1/pow)) - eps
+        previous_trade = eps/(self.price**(1/pow)) - eps
         new_trade = previous_trade * (1 - my) + my * total_trade
-        self.price = sp.divide(1,sp.power(new_trade+eps,pow))
+        self.price = (eps/(new_trade+eps))**pow
+
 
 
         #base = 1.1;                         #This could be implemented a parameter as well, it defines the switness in market change. values 1->infty
