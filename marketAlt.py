@@ -6,9 +6,14 @@
 #-------------------------------------------------------------------------------
 import scipy as sp
 class Market:
-    def __init__(self, initial_price):
-        self.price = sp.array(initial_price)
-        self.num_goods = len(initial_price)
+    eps = 1e-3
+    my = 0.05
+    pow = 2
+
+    def __init__(self, total_pop_fraction): # Assume total_pop_fraction to be of array type
+
+        self.price = (Market.eps/(total_pop_fraction+Market.eps) )**(Market.pow/2)
+        self.num_goods = len(self.price)
 
     def sell(self, fisherman_list):
         total_trade = sp.zeros(self.num_goods)
@@ -24,9 +29,9 @@ class Market:
         self.price[goods] = 0
 
     def price_responce(self, total_trade): #P = (eps/(Q+eps))^pow
-        eps = 1e-3
-        my = 0.05
-        pow = 2
+        eps = Market.eps
+        pow = Market.pow
+        my = Market.my
         previous_trade = eps/(self.price**(1/pow)) - eps
         new_trade = previous_trade * (1 - my) + my * total_trade
         self.price = (eps/(new_trade+eps))**pow
