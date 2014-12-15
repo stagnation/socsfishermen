@@ -53,10 +53,11 @@ class Sea:
 
     def harvest(self):
         for fisherman in rnd.sample(self.fishermans_list,len(self.fishermans_list)):  #In turns the fishermans fish
+            fisherman.move_to_best()
             #rnd.smaple to randomize order in which they fish so as to offset systematic gains for first fisherman in always fishing first
             x = fisherman.x
             y = fisherman.y
-            caught = fisherman.throw_net([f.population[x][y] for f in self.fishes_list])
+            caught = fisherman.throw_net([f.population[x,y] for f in self.fishes_list])
             for i, f in enumerate(self.fishes_list):
                 f.population[x,y] -= caught[i]
 
@@ -74,7 +75,7 @@ class Sea:
                 for y in y_to_learn:
                     y = y % self.size[1]
                     for specie, fishes in enumerate(self.fishes_list):
-                        precived_population = (1 + uncertainty*(sp.rand()-0.5)) * fishes.population[x][y]
+                        precived_population = (1 + uncertainty*(sp.rand()-0.5)) * fishes.population[x,y]
                         fisherman.gain_knowledge((x, y), precived_population, specie)
 
     def day_dynamics(self):
@@ -83,9 +84,9 @@ class Sea:
             f.grow(self.carrying_capacity[specie], self.allee_effect)
         self.explore(1, 0)
         self.harvest()
-        if self.move_each_day:
-            for f in self.fishermans_list:
-                f.move_to_best()
+        #if self.move_each_day:
+        #    for f in self.fishermans_list:
+        #        f.move_to_best()
 
     def __str__(self):
         for fishes in self.fishes_list:
@@ -95,7 +96,7 @@ class Sea:
         for fisherman in self.fishermans_list:
             type(fisherman)
             print(fisherman)
-        print("carry", self.carrying_capacity)    
+        print("carry", self.carrying_capacity)
         print("********")
         print("params: ")
         print("size", self.size)
@@ -107,11 +108,11 @@ class Sea:
         print("g rate", [f.growth_rate for f in self.fishes_list])
         #print("pop0", self.initial_population_fraction)
 
-        print("allee", self.allee_effect)   
-        
+        print("allee", self.allee_effect)
 
-            
+
+
         return ""
-        
-        
-  
+
+
+

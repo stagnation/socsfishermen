@@ -13,31 +13,30 @@ from plotTool import *
 if __name__ == '__main__':
     xsize = 2
     ysize = 2
-    num_fishermans = 4
+    num_fishermans = 2
     num_fish_species = 2
     initial_pop = 0.5
     capacity = 1
     allee = 0.1
     cap_mat = capacity * sp.ones((num_fish_species,xsize,ysize))
-    cap_mat[1] = sp.array([[0.5, 1e-6],[0.5,1e-6]])
+    cap_mat[1] = sp.array([[0.1, 1e-6],[0.1,1e-6]])
     #cap_mat += 0.1 * ( sp.random.random(cap_mat.shape) - 0.5 )
     allee_effect = 0.1;
-    growth_rate = 0.5
+    growth_rate = 0.1
     move_each_day = False
 
     #intial_price = (0.1,0.2,0.1)
     #market_demand = (0.12,0.4,0.12) not used with the other market dynamics
 
-    harvest_fractions = 0.3
+    harvest_fractions = 0.15
 
-    days = 2000
+    days = 400
 
     fish_population_log = sp.zeros((num_fish_species,xsize*ysize, days))
     fisherman_wealth_log = sp.zeros((num_fishermans, days))
     price_log = sp.zeros((num_fish_species,days))
 
     s = Sea((xsize, ysize), num_fishermans, harvest_fractions, 0, 0, num_fish_species, growth_rate, initial_pop, cap_mat, allee, move_each_day)
-
 
     market = Market(sp.mean(sp.mean(cap_mat,2),1)*initial_pop)
 
@@ -63,12 +62,13 @@ if __name__ == '__main__':
     #Plot the result
     plot_fishpop(fish_population_log)
     plt.figure()
-    for i in range(num_fishermans):
-        plt.plot(sp.arange(0, days), fisherman_wealth_log[i], label = 'Fisherman ' + str(i+1))
-    plt.xlabel('Time')
-    plt.ylabel('Total Wealth')
-    plt.legend()
-    plt.figure()
+    if False:
+        for i in range(num_fishermans):
+            plt.plot(sp.arange(0, days), fisherman_wealth_log[i], label = 'Fisherman ' + str(i+1))
+        plt.xlabel('Time')
+        plt.ylabel('Total Wealth')
+        plt.legend()
+        plt.figure()
     for i in range(num_fish_species):
         plt.semilogy(sp.arange(0, days), price_log[i], label = 'Specie ' + str(i+1))
     plt.xlabel('Time')

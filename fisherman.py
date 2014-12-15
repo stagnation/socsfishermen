@@ -12,7 +12,8 @@ class Fisherman:
         self.maximum_yield = 1 #we don't use this yet
         self.price_perception = price_perception
         self.threshold = threshold
-        self.perception_of_fishpopulation_value = [((x,y),0,0)]  
+        self.perception_of_fishpopulation_value = [((x,y),0,0)]
+        self.current_fishing_tactic = ((x,y),0,0)
         #List of the estimation made by the fisherman of which location and fish spice would  yeild a certain results
 
     def move(self, pos_tup):
@@ -26,12 +27,14 @@ class Fisherman:
             if (item[0]==pos_tup) & (item[1]==specie) :
                 self.perception_of_fishpopulation_value.remove(item)
                 break
+        #Add new knowledge
         self.perception_of_fishpopulation_value.append((pos_tup, specie, precived_value))
 
     def throw_net(self, site_fish_population):
         #Greedy always want to fish at the best location!
-        bestFishingSite = self.move_to_best()
-        specie = bestFishingSite[1]
+        #bestFishingSite = self.move_to_best()
+
+        specie = self.current_fishing_tactic[1]
 
         #only fish from one fish species
         caught = 0
@@ -42,7 +45,7 @@ class Fisherman:
             if caught > self.greed:
                 break
 
-        #caught = min(caught, self.maximum_yield)           #Removes the minimum for simpler model
+        #caught = min(caught, 0.15)           #Removes the minimum for simpler model
         self.catch = (specie, caught)
 
         #handle more than one species
@@ -55,7 +58,10 @@ class Fisherman:
         if len(self.perception_of_fishpopulation_value) > 0:
             bestFishingSite = max(self.perception_of_fishpopulation_value, key=lambda item:item[2])   #If he thinks the current location is best he will remain, is this correct???
             self.move(bestFishingSite[0])
+            self.current_fishing_tactic = bestFishingSite
             return bestFishingSite
+
+
 
 
 

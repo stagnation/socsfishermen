@@ -25,6 +25,7 @@ class Market:
             fisherman.catch = (0,0)
 
         self.price_responce(total_trade)
+
     def set_price_zero(self,goods):
         self.price[goods] = 0
 
