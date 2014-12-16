@@ -19,7 +19,7 @@ if __name__ == '__main__':
     capacity = 1
     allee = 0.1
     cap_mat = capacity * sp.ones((num_fish_species,xsize,ysize))
-    cap_mat[1] = sp.array([[0.1, 1e-6],[0.1,1e-6]])
+    cap_mat[1] = sp.array([[1e-6, 1e-6],[0.1,1e-6]])
     #cap_mat += 0.1 * ( sp.random.random(cap_mat.shape) - 0.5 )
     allee_effect = 0.1;
     growth_rate = 0.1
@@ -28,9 +28,9 @@ if __name__ == '__main__':
     #intial_price = (0.1,0.2,0.1)
     #market_demand = (0.12,0.4,0.12) not used with the other market dynamics
 
-    harvest_fractions = 0.15
+    harvest_fractions = 0.1     #Fish at MSY for large population
 
-    days = 400
+    days = 1000
 
     fish_population_log = sp.zeros((num_fish_species,xsize*ysize, days))
     fisherman_wealth_log = sp.zeros((num_fishermans, days))

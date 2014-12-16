@@ -6,9 +6,9 @@
 #-------------------------------------------------------------------------------
 import scipy as sp
 class Market:
-    eps = 1e-3
-    my = 0.05
-    pow = 2
+    eps = 1e-4
+    my = 0.02
+    pow = 1.4
 
     def __init__(self, total_pop_fraction): # Assume total_pop_fraction to be of array type
 
