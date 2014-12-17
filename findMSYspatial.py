@@ -21,20 +21,20 @@ if __name__ == '__main__':
     num_of_rates = 100
     days = 5000
 
-    xsize = 7
-    ysize = 7
+    xsize = 6
+    ysize = 6
     num_fishermans = 4
     initial_pop = 0.8
     capacity = 1
     cap_mat = capacity * sp.ones((xsize,ysize))
-    cap_mat[1,:] = 0.2
-    cap_mat[:,1] = 0.2
-    cap_mat[3,:] = 0.2
-    cap_mat[:,3] = 0.2
-    cap_mat[5,:] = 0.2
-    cap_mat[:,5] = 0.2
-    cap_mat[5,:] = 0.2
-    cap_mat[:,5] = 0.2
+    cap_mat[1,:] = 0.1
+    cap_mat[:,1] = 0.1
+    cap_mat[3,:] = 0.1
+    cap_mat[:,3] = 0.1
+    cap_mat[5,:] = 0.1
+    cap_mat[:,5] = 0.1
+    cap_mat[5,:] = 0.1
+    cap_mat[:,5] = 0.1
     capacity = cap_mat
     #cap_mat += 0.1 * ( sp.random.random(cap_mat.shape) - 0.5 )
     #cap_mat = [ cap_gen((xsize,ysize), 0.8, initial_pop), cap_gen((xsize,ysize), 0.3, initial_pop)]
@@ -44,8 +44,8 @@ if __name__ == '__main__':
     allee = sp.inf
     fisher_behavior = 1
 
-    harvest_fractions = sp.arange(0, num_of_rates)/num_of_rates
-
+    harvest_fractions = sp.arange(0, num_of_rates)/num_of_rates*0.5
+    harvest_fractions[num_of_rates-1] = 1
     thresholds = 0
 
     catch_log = sp.zeros(num_of_rates)
