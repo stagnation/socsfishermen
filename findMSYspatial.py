@@ -21,9 +21,9 @@ if __name__ == '__main__':
     num_of_rates = 100
     days = 5000
 
-    xsize = 5
-    ysize = 5
-    num_fishermans = 2
+    xsize = 6
+    ysize = 6
+    num_fishermans = 12
     initial_pop = 0.8
     capacity = 1
     cap_mat = capacity * sp.ones((xsize,ysize))
@@ -31,6 +31,10 @@ if __name__ == '__main__':
     cap_mat[:,1] = 0.2
     cap_mat[3,:] = 0.2
     cap_mat[:,3] = 0.2
+    cap_mat[5,:] = 0.2
+    cap_mat[:,5] = 0.2
+    cap_mat[5,:] = 0.2
+    cap_mat[:,5] = 0.2
     capacity = cap_mat
     #cap_mat += 0.1 * ( sp.random.random(cap_mat.shape) - 0.5 )
     #cap_mat = [ cap_gen((xsize,ysize), 0.8, initial_pop), cap_gen((xsize,ysize), 0.3, initial_pop)]
@@ -40,7 +44,7 @@ if __name__ == '__main__':
     allee = sp.inf
     move_each_day = False
 
-    harvest_fractions = sp.arange(0, num_of_rates)/num_of_rates
+    harvest_fractions = sp.arange(0, num_of_rates)/num_of_rates*0.4
 
     thresholds = 0
 
@@ -61,7 +65,7 @@ if __name__ == '__main__':
 
     #Run to find the dynamics of intresting harvest_propotions
     intrest_harvest_fractions = [0, maximum_harvest_fraction]
-    days = 200
+    days = 500
     initial_pop = 0.8
     fish_population_log = sp.zeros((4,days))
     for k in range(2):
