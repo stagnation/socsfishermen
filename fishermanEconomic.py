@@ -1,6 +1,6 @@
 import scipy as sp
 
-class Fisherman:
+class FishermanVaryHarvest:
     def __init__(self, x , y, price_perception, harvest_fraction=0.3, threshold=0, greed=0):
         #not sensible default values at the moment
         self.x = x
@@ -52,11 +52,11 @@ class Fisherman:
 
         #caught = min(caught, 0.15)           #Removes the minimum for simpler model
         self.catch = (specie, caught)
-        if not(self.harvest_changed):
+        if not(self.harvest_changed):           #Don't change two times in row
             self.harvest_changed = True
-            if self.percived_value(self.catch)>=self.percived_value(self.lastcatch):
+            if self.percived_value(self.catch)>=self.percived_value(self.lastcatch):    #Did the value increase, I WANT MORE
                 self.harvest_fraction *= 1+1e-1
-            else:    #elif self.harvest_fraction>1e-2:
+            else:                                                                       #Hmm, got less maybe stuff are dying, reduce
                 self.harvest_fraction *= 1-1e-1
         else:
             self.harvest_changed = False

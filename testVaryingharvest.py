@@ -18,17 +18,19 @@ if __name__ == '__main__':
     initial_pop = 0.5
     capacity = 1
     allee = 0.1
-    cap_mat = capacity * sp.ones((num_fish_species,xsize,ysize))
-    cap_mat[1] = sp.array([[1e-6, 1e-6],[1,1e-6]])
+    cap_mat = capacity * sp.ones((num_fish_species,xsize,ysize))    #Equally good => Kill both?
+    cap_mat[1] = sp.array([[1e-6, 1e-6],[1,1e-6]])                 #Case, you fish I fish symbiosis
+    #cap_mat[1] = sp.array([[1e-6, 1e-6],[0.5,1e-6]])               #Case, nobody fishes, fishes are rare on market, GAIN
     #cap_mat += 0.1 * ( sp.random.random(cap_mat.shape) - 0.5 )
     allee_effect = 0.1;
     growth_rate = 0.1
     fisher_behavior = 1
+    varyharvest = True
 
     #intial_price = (0.1,0.2,0.1)
     #market_demand = (0.12,0.4,0.12) not used with the other market dynamics
 
-    harvest_fractions = 0.1     #Fish at MSY for large population
+    harvest_fractions = 0.01     #Fish at MSY for large population
 
     days = 5000
 
@@ -37,7 +39,7 @@ if __name__ == '__main__':
     fisherman_rate_log = sp.zeros((num_fishermans, days))
     price_log = sp.zeros((num_fish_species,days))
 
-    s = Sea((xsize, ysize), num_fishermans, harvest_fractions, 0, 0, num_fish_species, growth_rate, initial_pop, cap_mat, allee, fisher_behavior)
+    s = Sea((xsize, ysize), num_fishermans, harvest_fractions, 0, 0, num_fish_species, growth_rate, initial_pop, cap_mat, allee, fisher_behavior,varyharvest)
 
     market = Market(sp.mean(sp.mean(cap_mat,2),1)*initial_pop)
 
@@ -71,7 +73,7 @@ if __name__ == '__main__':
         plt.legend()
         plt.figure()
     for i in range(num_fishermans):
-        plt.plot(sp.arange(0, days), fisherman_rate_log[i], label = 'Fisherman ' + str(i+1))
+        plt.semilogy(sp.arange(0, days), fisherman_rate_log[i], label = 'Fisherman ' + str(i+1))
     plt.xlabel('Time')
     plt.ylabel('Harvest rate')
     plt.legend()

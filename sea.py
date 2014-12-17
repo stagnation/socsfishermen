@@ -1,5 +1,6 @@
 import scipy as sp
 import random as rnd
+from fishermanEconomic import *
 from fisherman import *
 from fishes import *
 
@@ -9,7 +10,7 @@ class Sea:
     #The carrying_capacity defines the capacity for all tiles, (this can be a matrix if it should differ between tiles
     #Initial population_fraction is the how large fraction of the capacity the fish will initailly be
     #Similarly the harvest rate is either a vector one for each fisherman or a scalar for all fishermans
-    def __init__(self, size_tup, n_fishermans, harvest_fractions, thresholds, greeds, fish_species, growth_rate, initial_population_fraction, carrying_capacity, allee_effect, fisher_behavior):
+    def __init__(self, size_tup, n_fishermans, harvest_fractions, thresholds, greeds, fish_species, growth_rate, initial_population_fraction, carrying_capacity, allee_effect, fisher_behavior,varyharvest =False):
         self.fisher_behavior = fisher_behavior
         self.size = size_tup
         if not isinstance(carrying_capacity, list):                  #If the capacity is scalar make it a matrix
@@ -48,7 +49,10 @@ class Sea:
         for i in range(n_fishermans):
             x_pos = rnd.choice(range(self.size[0]))
             y_pos = rnd.choice(range(self.size[1]))
-            sailor = Fisherman(x_pos, y_pos, price_perceptions, harvest_fractions[i], thresholds[i], greeds[i])
+            if varyharvest:
+                sailor = FishermanVaryHarvest(x_pos, y_pos, price_perceptions, harvest_fractions[i], thresholds[i], greeds[i])
+            else:
+                sailor = Fisherman(x_pos, y_pos, price_perceptions, harvest_fractions[i], thresholds[i], greeds[i])
             self.fishermans_list.append(sailor)
 
     def harvest(self):
@@ -126,8 +130,8 @@ class Sea:
         self.harvest()
 
         #do we want diffusion?
-        for f in self.fishes_list:
-            f.diffuse()
+        #for f in self.fishes_list:
+        #    f.diffuse()
         return True
 
     def __str__(self):
