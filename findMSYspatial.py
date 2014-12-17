@@ -21,9 +21,9 @@ if __name__ == '__main__':
     num_of_rates = 100
     days = 5000
 
-    xsize = 6
-    ysize = 6
-    num_fishermans = 12
+    xsize = 7
+    ysize = 7
+    num_fishermans = 4
     initial_pop = 0.8
     capacity = 1
     cap_mat = capacity * sp.ones((xsize,ysize))
@@ -42,9 +42,9 @@ if __name__ == '__main__':
     greeds = 0
     fish_species = 1
     allee = sp.inf
-    move_each_day = False
+    fisher_behavior = 1
 
-    harvest_fractions = sp.arange(0, num_of_rates)/num_of_rates*0.4
+    harvest_fractions = sp.arange(0, num_of_rates)/num_of_rates
 
     thresholds = 0
 
@@ -53,7 +53,7 @@ if __name__ == '__main__':
     maximum_harvest_fraction = 0
 
     for k in range(num_of_rates):
-        s = Sea((xsize, ysize), num_fishermans , harvest_fractions[k] , thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee, move_each_day)
+        s = Sea((xsize, ysize), num_fishermans , harvest_fractions[k] , thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee, fisher_behavior)
         for day in range(days):
             s.day_dynamics()
             for fisherman in s.fishermans_list:
@@ -69,7 +69,7 @@ if __name__ == '__main__':
     initial_pop = 0.8
     fish_population_log = sp.zeros((4,days))
     for k in range(2):
-        s = Sea((xsize, ysize), num_fishermans , intrest_harvest_fractions[k] ,  thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee, move_each_day)
+        s = Sea((xsize, ysize), num_fishermans , intrest_harvest_fractions[k] ,  thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee, fisher_behavior)
         for day in range(days):
             for x in range(xsize):
                 for y in range(ysize):
@@ -77,7 +77,7 @@ if __name__ == '__main__':
             s.day_dynamics()
     initial_pop = 0.2
     for k in range(2,4):
-        s = Sea((xsize, ysize), num_fishermans , intrest_harvest_fractions[k-2] ,  thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee, move_each_day)
+        s = Sea((xsize, ysize), num_fishermans , intrest_harvest_fractions[k-2] ,  thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee, fisher_behavior)
         for day in range(days):
             for x in range(xsize):
                 for y in range(ysize):

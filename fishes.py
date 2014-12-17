@@ -1,4 +1,5 @@
 import scipy as sp
+import random as ran
 
 class Fishes:
     #A sea consisting of tiles of fish each following a logistic growth
@@ -19,7 +20,25 @@ class Fishes:
 
         #Numerical errors trying to compensate...
         extinction_limit = 1e-3
-        self.population = self.population * (self.population>extinction_limit)
+        survive_matrix = (self.population>extinction_limit)
+        self.population = self.population * survive_matrix
+        if not sp.any(survive_matrix):
+            print("all extinct")
+            return False
+        return True
+
+    def diffuse(self):
+        diffusion = 0.1
+        x = sp.random.randint(self.size[0])
+        y = sp.random.randint(self.size[1])
+        directions = [((x -1) % self.size[0],y% self.size[1]), (x% self.size[0], (y-1)% self.size[1]), (x% self.size[0],(y+1)% self.size[1]), ((x+1)% self.size[0],y% self.size[1])]
+        avail = [ d for d in directions if self.population[d] == 0]
+        if avail:
+            newpos = ran.choice( avail )
+            self.population[newpos] = diffusion * self.population[x,y]
+            self.population[x,y] -= diffusion * self.population[x,y]
+
+
 
     def __str__(self):
         print('Fishes: ')

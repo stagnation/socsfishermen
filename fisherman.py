@@ -39,7 +39,7 @@ class Fisherman:
         #only fish from one fish species
         caught = 0
         nets = 0
-        max_throws = 1 #Place holder #only once not sure if we want greed.
+        max_throws = 1 #Placeholder #only once not sure if we want greed.
         for nets in range( max_throws ):
             caught += site_fish_population[specie] * self.harvest_fraction
             if caught > self.greed:
@@ -56,7 +56,8 @@ class Fisherman:
 
     def move_to_best(self):
         if len(self.perception_of_fishpopulation_value) > 0:
-            bestFishingSite = max(self.perception_of_fishpopulation_value, key=lambda item:item[2])   #If he thinks the current location is best he will remain, is this correct???
+            bestFishingSite = max(self.perception_of_fishpopulation_value, key=lambda item:item[2])   
+            #If he thinks the current location is best he will remain, is this correct???
             self.move(bestFishingSite[0])
             self.current_fishing_tactic = bestFishingSite
             return bestFishingSite

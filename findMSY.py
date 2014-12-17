@@ -29,7 +29,7 @@ if __name__ == '__main__':
     greeds = 0
     fish_species = 1
     allee = sp.inf
-    move_each_day = False
+    fisher_behavior = 1
 
     harvest_fractions = sp.arange(0, num_of_rates)/num_of_rates/10
 
@@ -40,7 +40,7 @@ if __name__ == '__main__':
     maximum_harvest_fraction = 0
 
     for k in range(num_of_rates):
-        s = Sea((xsize, ysize), num_fishermans , harvest_fractions[k] , thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee, move_each_day)
+        s = Sea((xsize, ysize), num_fishermans , harvest_fractions[k] , thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee, fisher_behavior)
         for day in range(days):
             s.day_dynamics()
 
@@ -56,14 +56,14 @@ if __name__ == '__main__':
     fish_population_log = sp.zeros((4,days))
     initial_pop = 0.8
     for k in range(2):
-        s = Sea((xsize, ysize), num_fishermans , intrest_harvest_fractions[k] ,  thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee, move_each_day)
+        s = Sea((xsize, ysize), num_fishermans , intrest_harvest_fractions[k] ,  thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee, fisher_behavior)
         for day in range(days):
             tmp = s.fishes_list[0].population
             fish_population_log[k][day] = tmp[0][0]
             s.day_dynamics()
     initial_pop = 0.2
     for k in range(2,4):
-        s = Sea((xsize, ysize), num_fishermans , intrest_harvest_fractions[k-2] ,  thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee, move_each_day)
+        s = Sea((xsize, ysize), num_fishermans , intrest_harvest_fractions[k-2] ,  thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee, fisher_behavior)
         for day in range(days):
             tmp = s.fishes_list[0].population
             fish_population_log[k][day] = tmp[0][0]

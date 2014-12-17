@@ -23,7 +23,7 @@ if __name__ == '__main__':
     #cap_mat += 0.1 * ( sp.random.random(cap_mat.shape) - 0.5 )
     allee_effect = 0.1;
     growth_rate = 0.1
-    move_each_day = False
+    fisher_behavior = 1
 
     #intial_price = (0.1,0.2,0.1)
     #market_demand = (0.12,0.4,0.12) not used with the other market dynamics
@@ -36,7 +36,7 @@ if __name__ == '__main__':
     fisherman_wealth_log = sp.zeros((num_fishermans, days))
     price_log = sp.zeros((num_fish_species,days))
 
-    s = Sea((xsize, ysize), num_fishermans, harvest_fractions, 0, 0, num_fish_species, growth_rate, initial_pop, cap_mat, allee, move_each_day)
+    s = Sea((xsize, ysize), num_fishermans, harvest_fractions, 0, 0, num_fish_species, growth_rate, initial_pop, cap_mat, allee, fisher_behavior)
 
     market = Market(sp.mean(sp.mean(cap_mat,2),1)*initial_pop)
 

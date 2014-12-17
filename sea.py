@@ -9,8 +9,8 @@ class Sea:
     #The carrying_capacity defines the capacity for all tiles, (this can be a matrix if it should differ between tiles
     #Initial population_fraction is the how large fraction of the capacity the fish will initailly be
     #Similarly the harvest rate is either a vector one for each fisherman or a scalar for all fishermans
-    def __init__(self, size_tup, n_fishermans, harvest_fractions, thresholds, greeds, fish_species, growth_rate, initial_population_fraction, carrying_capacity, allee_effect, move_each_day):
-        self.move_each_day = move_each_day
+    def __init__(self, size_tup, n_fishermans, harvest_fractions, thresholds, greeds, fish_species, growth_rate, initial_population_fraction, carrying_capacity, allee_effect, fisher_behavior):
+        self.fisher_behavior = fisher_behavior
         self.size = size_tup
         if not isinstance(carrying_capacity, list):                  #If the capacity is scalar make it a matrix
             self.carrying_capacity = sp.ones(self.size)*carrying_capacity
@@ -53,7 +53,7 @@ class Sea:
 
     def harvest(self):
         for fisherman in rnd.sample(self.fishermans_list,len(self.fishermans_list)):  #In turns the fishermans fish
-            fisherman.move_to_best()
+            #fisherman.move_to_best() handled in day dynamics
             #rnd.smaple to randomize order in which they fish so as to offset systematic gains for first fisherman in always fishing first
             x = fisherman.x
             y = fisherman.y
@@ -66,8 +66,11 @@ class Sea:
 
         return None
 
-    def explore(self, radius, uncertainty):
+    def explore_all(self, radius, uncertainty):
         for fisherman in self.fishermans_list:  #In turns the fishermans explore a given radius
+            self.explore(fisherman, radius, uncertainty)
+
+    def explore(self, fisherman, radius, uncertainty):
             x_to_learn = range(fisherman.x-radius, fisherman.x+radius)
             y_to_learn = range(fisherman.y-radius, fisherman.y+radius)
             for x in x_to_learn:
@@ -81,12 +84,51 @@ class Sea:
     def day_dynamics(self):
         #(fishes.grow(self.allee_effect,self.carrying_capacity) for fishes in self.fishes_list)
         for specie ,f in enumerate(self.fishes_list):
-            f.grow(self.carrying_capacity[specie], self.allee_effect)
-        self.explore(1, 0)
+            survive = f.grow(self.carrying_capacity[specie], self.allee_effect) #returns true while fishes are still alive, false if extinct
+            #if not survive:
+            #    print("sea extinct")
+            #    return False #when first species goes extinct, todo: all species but one or something?
+        self.explore_all(1, 0)
+
+        if self.fisher_behavior == 0: #don't move until fish is extinct
+            for f in self.fishermans_list:
+                location = f.current_fishing_tactic[0]
+                specie = f.current_fishing_tactic[1]
+                if self.fishes_list[specie].population[location] == 0:
+                    f.move_to_best()
+
+        if self.fisher_behavior == 1: #move each day
+            for f in self.fishermans_list:
+                f.move_to_best()
+
+        if self.fisher_behavior == 2: #move each day + no return
+            for f in self.fishermans_list:
+                current_pos = f.current_fishing_tactic
+                best = f.move_to_best()
+                if best == current_pos:
+                    f.perception_of_fishpopulation_value.remove(best)
+                    f.move_to_best()
+
+        if self.fisher_behavior == 3: #move each day + large radius
+            for f in self.fishermans_list:
+                self.explore(f, 2, 0)
+                f.move_to_best()
+
+        if self.fisher_behavior == 4: #move each day + no return + large radius
+            for f in self.fishermans_list:
+                current_pos = f.current_fishing_tactic
+                self.explore(f, 2, 0)
+                best = f.move_to_best()
+                if best == current_pos:
+                    f.perception_of_fishpopulation_value.remove(best)
+                    f.move_to_best()
+
         self.harvest()
-        #if self.move_each_day:
-        #    for f in self.fishermans_list:
-        #        f.move_to_best()
+
+        #do we want diffusion?
+        for f in self.fishes_list:
+            f.diffuse()
+        return True
 
     def __str__(self):
         for fishes in self.fishes_list:
