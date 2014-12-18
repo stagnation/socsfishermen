@@ -30,13 +30,14 @@ if __name__ == '__main__':
 
     harvest_fractions = 0.1     #Fish at MSY for large population
 
-    days = 560
+    days = 500
 
     fish_population_log = sp.zeros((num_fish_species,xsize*ysize, days))
     fisherman_wealth_log = sp.zeros((num_fishermans, days))
     price_log = sp.zeros((num_fish_species,days))
+    level = sp.zeros(num_fishermans)
 
-    s = Sea((xsize, ysize), num_fishermans, harvest_fractions, 0, 0, num_fish_species, growth_rate, initial_pop, cap_mat, allee, fisher_behavior)
+    s = Sea((xsize, ysize), num_fishermans, harvest_fractions, 0, 0, num_fish_species, growth_rate, initial_pop, cap_mat, allee, fisher_behavior, level)
 
     market = Market(sp.mean(sp.mean(cap_mat,2),1)*initial_pop)
 

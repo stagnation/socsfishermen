@@ -1,6 +1,5 @@
 import scipy as sp
 import random as rnd
-from fishermanEconomic import *
 from fisherman import *
 from fishes import *
 
@@ -10,7 +9,7 @@ class Sea:
     #The carrying_capacity defines the capacity for all tiles, (this can be a matrix if it should differ between tiles
     #Initial population_fraction is the how large fraction of the capacity the fish will initailly be
     #Similarly the harvest rate is either a vector one for each fisherman or a scalar for all fishermans
-    def __init__(self, size_tup, n_fishermans, harvest_fractions, thresholds, greeds, fish_species, growth_rate, initial_population_fraction, carrying_capacity, allee_effect, fisher_behavior, varyharvest, levels):
+    def __init__(self, size_tup, n_fishermans, harvest_fractions, thresholds, greeds, fish_species, growth_rate, initial_population_fraction, carrying_capacity, allee_effect, fisher_behavior, levels):
         self.fisher_behavior = fisher_behavior
         self.size = size_tup
         self.diffuse = False
@@ -51,10 +50,7 @@ class Sea:
         for i in range(n_fishermans):
             x_pos = rnd.choice(range(self.size[0]))
             y_pos = rnd.choice(range(self.size[1]))
-            if varyharvest:
-                sailor = FishermanVaryHarvest(x_pos, y_pos, price_perceptions, harvest_fractions[i], thresholds[i], greeds[i], levels[i])
-            else:
-                sailor =            Fisherman(x_pos, y_pos, price_perceptions, harvest_fractions[i], thresholds[i], greeds[i], levels[i]) #prob no level
+            sailor =            Fisherman(x_pos, y_pos, price_perceptions, harvest_fractions[i], thresholds[i], greeds[i], levels[i]) #prob no level
             self.fishermans_list.append(sailor)
         self.num_zero_levels = len(levels) - sum(levels)
 
@@ -87,8 +83,8 @@ class Sea:
                     for specie, fishes in enumerate(self.fishes_list):
                         precived_population = (1 + uncertainty*(sp.rand()-0.5)) * fishes.population[x,y]
                         fisherman.gain_knowledge((x, y), precived_population, specie)
-                        
-#finds the nth best location for each fish specie                        
+
+#finds the nth best location for each fish specie
     def explore_nth_best(self, fisherman, one_level_num, blacklist=[]):
         #nth best 0 indexed, 0 is best-best, 1 is second best and so on.
         #blacklsit if we want l1 fishermans to explicitly ignore where l0 fishermen are
@@ -99,13 +95,13 @@ class Sea:
             rav_idx = sp.where(rav==nth_best_idx)[0][0]
             location = sp.unravel_index(rav_idx, fishes_mat.shape)
             fisherman.gain_knowledge(location, fish_mat[location], s)
-            
-#finds the best available location for each specie            
+
+#finds the best available location for each specie
     def explore_best_remaining(self, fisherman, blacklist):
         #I WANT:
         #blacklist: list of locations
         #blacklist[specie] = list[ (x,y), (x,y), (x,y)]
-        
+
         #EASY TO GET:
         #blacklist: list of tactics
         #blacklist = list[ (s, (x,y)), (s, (x,y)) ...]
@@ -122,19 +118,23 @@ class Sea:
 
     def day_dynamics(self):
         #(fishes.grow(self.allee_effect,self.carrying_capacity) for fishes in self.fishes_list)
+        all_dead = True
         for specie ,f in enumerate(self.fishes_list):
             survive = f.grow(self.carrying_capacity[specie], self.allee_effect) #returns true while fishes are still alive, false if extinct
-            if not survive and self.truncate_extinction:
+            if survive:
+                all_dead = False
+            #if not survive and self.truncate_extinction:
                 #print("sea extinct")
-                return False #when first species goes extinct, todo: all species but one or something?
+        if all_dead and self.truncate_extinction:
+            return False #when first species goes extinct, todo: all species but one or something?
 
         #want to know how many 0-levels
         #and count up the 1-levels
-        
+
         fisherman_locations = [[ (None,)*2 for i in range(len(self.fishermans_list))] for x in range(len(self.fishes_list))]
         #refactor to have two lists with num_Fiserman nones and
         #add a few elements to them so they are sorted by species....
-        
+
         for fidx, f in enumerate(self.fishermans_list):  #would be easier if the one levels are always alst here
             if f.level == 0:
                 if self.fisher_behavior == 0: #don't move until fish is extinct
@@ -167,13 +167,13 @@ class Sea:
                 #    if best == current_pos:
                 #        f.perception_of_fishpopulation_value.remove(best)
                 #        f.move_to_best()
-                        
+
                 tactic = f.current_fishing_tactic
                 specie = tactic[1]
                 location = tactic[0]
-                fisherman_locations[specie][fidx] = location        
-                        
-        for fidx, f in enumerate(self.fishermans_list):       #quick and dirty solution-...          
+                fisherman_locations[specie][fidx] = location
+
+        for fidx, f in enumerate(self.fishermans_list):       #quick and dirty solution-...
             if f.level == 1:
                 f.perception_of_fishpopulation_value = [] #[((x,y),0,0)]
                 self.explore_best_remaining(f, fisherman_locations)
@@ -183,10 +183,10 @@ class Sea:
                 specie = tactic[1]
                 location = tactic[0]
                 fisherman_locations[specie][fidx] = location
-                
+
                 #not sure if this movemnet works properly or if it just makes everything much more resilient...
-                
-        #end fisherman loop    
+
+        #end fisherman loop
 
         self.harvest()
 
@@ -194,7 +194,7 @@ class Sea:
         if self.diffuse:
             for f in self.fishes_list:
                 f.diffuse()
-                
+
         return True
 
     def __str__(self):

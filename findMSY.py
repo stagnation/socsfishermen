@@ -39,12 +39,12 @@ if __name__ == '__main__':
     maximum_catch = 0
     maximum_harvest_fraction = 0
     level = [0]
-    vary = False
 
     for k in range(num_of_rates):
-        s = Sea((xsize, ysize), num_fishermans , harvest_fractions[k] , thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee, fisher_behavior, vary, level)
+        s = Sea((xsize, ysize), num_fishermans , harvest_fractions[k] , thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee, fisher_behavior, level)
         for day in range(days):
-            s.day_dynamics()
+            if not(s.day_dynamics()):
+                break
 
         catch_log[k] = s.fishermans_list[0].catch[1];
         if maximum_catch < catch_log[k]:
@@ -58,14 +58,14 @@ if __name__ == '__main__':
     fish_population_log = sp.zeros((4,days))
     initial_pop = 0.8
     for k in range(2):
-        s = Sea((xsize, ysize), num_fishermans , intrest_harvest_fractions[k] ,  thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee, fisher_behavior, vary, level)
+        s = Sea((xsize, ysize), num_fishermans , intrest_harvest_fractions[k] ,  thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee, fisher_behavior, level)
         for day in range(days):
             tmp = s.fishes_list[0].population
             fish_population_log[k][day] = tmp[0][0]
             s.day_dynamics()
     initial_pop = 0.2
     for k in range(2,4):
-        s = Sea((xsize, ysize), num_fishermans , intrest_harvest_fractions[k-2] ,  thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee, fisher_behavior, vary, level)
+        s = Sea((xsize, ysize), num_fishermans , intrest_harvest_fractions[k-2] ,  thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee, fisher_behavior, level)
         for day in range(days):
             tmp = s.fishes_list[0].population
             fish_population_log[k][day] = tmp[0][0]

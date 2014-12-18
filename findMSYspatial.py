@@ -18,7 +18,7 @@ from sea import *
 from plotTool import *
 
 if __name__ == '__main__':
-    num_of_rates = 50
+    num_of_rates = 100
     days = 5000
 
     xsize = 6
@@ -35,23 +35,23 @@ if __name__ == '__main__':
     allee = sp.inf
     fisher_behavior = 1
 
-    harvest_fractions = sp.arange(0, num_of_rates)/num_of_rates*2
+    harvest_fractions = sp.arange(0, num_of_rates)/num_of_rates*0.5
     harvest_fractions[num_of_rates-1] = 1
     thresholds = 0
 
     catch_log = sp.zeros(num_of_rates)
     maximum_catch = 0
     maximum_harvest_fraction = 0
-    vary = False
     level = sp.zeros(num_fishermans)
 
     for k in range(num_of_rates):
-        s = Sea((xsize, ysize), num_fishermans , harvest_fractions[k] , thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee, fisher_behavior, vary, level)
+        s = Sea((xsize, ysize), num_fishermans , harvest_fractions[k] , thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee, fisher_behavior, level)
         for day in range(days):
-            s.day_dynamics()
+            if not(s.day_dynamics()):
+                catch_log[k] = 0
+                break
             for fisherman in s.fishermans_list:
                 catch_log[k] += fisherman.catch[1]/days
-                fisherman.catch = (0,0)
         if maximum_catch < catch_log[k]:
             maximum_catch = catch_log[k]
             maximum_harvest_fraction = harvest_fractions[k]
@@ -63,7 +63,7 @@ if __name__ == '__main__':
     initial_pop = 0.8
     fish_population_log = sp.zeros((4,days))
     for k in range(2):
-        s = Sea((xsize, ysize), num_fishermans , intrest_harvest_fractions[k] ,  thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee, fisher_behavior, vary, level)
+        s = Sea((xsize, ysize), num_fishermans , intrest_harvest_fractions[k] ,  thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee, fisher_behavior, level)
         for day in range(days):
             for x in range(xsize):
                 for y in range(ysize):
@@ -71,7 +71,7 @@ if __name__ == '__main__':
             s.day_dynamics()
     initial_pop = 0.2
     for k in range(2,4):
-        s = Sea((xsize, ysize), num_fishermans , intrest_harvest_fractions[k-2] ,  thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee, fisher_behavior, vary, level)
+        s = Sea((xsize, ysize), num_fishermans , intrest_harvest_fractions[k-2] ,  thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee, fisher_behavior, level)
         for day in range(days):
             for x in range(xsize):
                 for y in range(ysize):
