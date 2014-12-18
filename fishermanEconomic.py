@@ -6,11 +6,12 @@ class FishermanVaryHarvest:
         self.x = x
         self.y = y
         self.harvest_fraction = harvest_fraction
-        self.harvest_changed = True
-        self.greed = greed
-        self.lastcatch = (0,0)      #(spice,amount)
+        self.harvest_count = 2
+        self.greed = greed          #Makes use of this in a new sence
         self.catch = (0,0)          #(spice,amount)
         self.wealth = 0
+        self.wealthpre1 = 0
+        self.wealthpre2 = 0
         self.maximum_yield = 1 #we don't use this yet
         self.price_perception = price_perception
         self.threshold = threshold
@@ -34,7 +35,20 @@ class FishermanVaryHarvest:
     def percived_value(self,catch):
         return catch[1]*self.price_perception[catch[0]]
         #return catch[1]
+    def moneyDiff(self,update = False):
+        money_diff = (self.wealth-self.wealthpre1) - (self.wealthpre1-self.wealthpre2)
+        if update:
+            self.updateMoneyDiff()
+        return money_diff
+    def updateMoneyDiff(self):
+        self.wealthpre2 = self.wealthpre1
+        self.wealthpre1 = self.wealth
 
+    def gotMoreMoney(self,update=False):
+        got_more_money = (self.wealth - self.wealthpre1 >= self.wealthpre1-self.wealthpre2)
+        if update:
+            self.updateMoneyDiff()
+        return got_more_money
     def throw_net(self, site_fish_population):
         #Greedy always want to fish at the best location!
         #bestFishingSite = self.move_to_best()
@@ -52,15 +66,20 @@ class FishermanVaryHarvest:
 
         #caught = min(caught, 0.15)           #Removes the minimum for simpler model
         self.catch = (specie, caught)
-        if not(self.harvest_changed):           #Don't change two times in row
-            self.harvest_changed = True
-            if self.percived_value(self.catch)>=self.percived_value(self.lastcatch):    #Did the value increase, I WANT MORE
+        if self.harvest_count==0:           #Don't change two times in row
+            self.harvest_count = 2
+            if self.gotMoreMoney():
                 self.harvest_fraction *= 1+1e-1
             else:                                                                       #Hmm, got less maybe stuff are dying, reduce
                 self.harvest_fraction *= 1-1e-1
         else:
-            self.harvest_changed = False
-        self.lastcatch = self.catch
+                self.harvest_count -= 1
+        self.updateMoneyDiff()
+        if sp.rand()<self.greed:                                                    #Sometimes i like to increase my harvest rate for no reason
+            self.harvest_fraction *= 1+5e-2
+        #if sp.rand()<0.13:                                                     #Sometimes i like to decrease my harvest rate for no reason
+        #    self.harvest_fraction *= 1-1e-2
+
         #handle more than one species
         vec_caught = sp.zeros_like(site_fish_population)
         vec_caught[specie] = caught

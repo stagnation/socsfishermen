@@ -52,7 +52,7 @@ if __name__ == '__main__':
     entinction_log = 0
     extinction_log = [[],[]]
     #behavior = 1 #1 for move each day, 2 for move each day but no return
-    
+
     def evaluate( behavior ):
         print("behaviorbehaviorbehaviorbehaviorbehavior", behavior)
         extinction_log = sp.zeros((num_fish_species, evaluations, xsize*ysize))
@@ -70,12 +70,12 @@ if __name__ == '__main__':
                 if day % 500 == 0:
                     print("day",day)
                 survive = s.day_dynamics()
-                if not survive:
-                    print("all extinct day", day)
-                    break
-                
+                #if not survive:
+                #    print("all extinct day", day)
+                #    break
+
                 market.sell(s.fishermans_list)
-    
+
                 for i,price in enumerate(market.price):
                     price_log[i][day] = price
 
@@ -101,8 +101,8 @@ if __name__ == '__main__':
         #
         #
         return extinction_log, (fish_population_log, fisherman_wealth_log, price_log)
-    #end evaluate function 
-    
+    #end evaluate function
+
     behaviors = [0, 1,2,3,4] #0 1 2 3 4
 
     extinction_log = sp.zeros((len(behaviors), num_fish_species, evaluations, xsize*ysize))
@@ -112,14 +112,14 @@ if __name__ == '__main__':
         #plot total yield in same figure? so as to maximize everything?
     extinction_log = sp.ma.masked_equal(extinction_log, 1)
     #print("\n\nRESULTS\n")
-    #print("ext mean for behaviors", extinction_mean) 
-    #print("ext std for behaviors", extinction_std)   
+    #print("ext mean for behaviors", extinction_mean)
+    #print("ext std for behaviors", extinction_std)
 
 
     #do we want to change extinction criterion from all dead < eps
     #to almost dead, fraction of initial suppy
     #to avoid wasting time chasing that last school of fish, or something
-    
+
     if extinct_plot:
         #plot all the extinction points?
         extinction_mean = sp.zeros((len(behaviors),num_fish_species))
@@ -129,7 +129,7 @@ if __name__ == '__main__':
                 extinction_mean[behav, specie] = sp.mean(extinction_log[behav,specie])
                 extinction_std[behav, specie] = sp.std(extinction_log[behav,specie])
                 #print(extinction_log[behav,specie])
-        
+
         ext_s1 = extinction_mean[:,0]
         ext_s2 = extinction_mean[:,1]
         std_s1 = extinction_std[:,0]
@@ -139,20 +139,20 @@ if __name__ == '__main__':
         #would probably want to reformat log
         #plt.plot( behaviors, ext_s1, linestyle='none', marker='*', color='blue')
         #plt.plot( behaviors, ext_s1 + std_s1, linestyle='none', marker='.', color='blue')
-    
+
         plt.plot( behaviors+0.15*sp.ones_like(behaviors), ext_s2, linestyle='none', marker='*', color='green')
         plt.plot( behaviors+0.15*sp.ones_like(behaviors), ext_s2 + std_s2, linestyle='none', marker='.', color='green')
-        
+
         for behav in behaviors:
             #for specie in range(len(extinction_log[behav])):
             for eva in range(evaluations):
                 extinction_series = extinction_log[behav, 1, eva]
                 plt.plot( (behav + 0.01* eva)* sp.ones_like(extinction_series), extinction_series, marker='.', linestyle='none', color='green', alpha=0.3)
- 
+
         zero_limits()
     print("\n\nRESULTS\n")
-    print("ext mean for behaviors", extinction_mean) 
-    print("ext std for behaviors", extinction_std)   
+    print("ext mean for behaviors", extinction_mean)
+    print("ext std for behaviors", extinction_std)
 
     #Plot the result
 

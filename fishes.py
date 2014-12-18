@@ -22,12 +22,13 @@ class Fishes:
         extinction_limit = 1e-3
         survive_matrix = (self.population>extinction_limit)
         self.population = self.population * survive_matrix
-        if not sp.any(survive_matrix):
-            print("all extinct")
-            return False
+        #if not sp.any(survive_matrix):
+        #    print("all extinct")
+        #    return False
         return True
 
     def diffuse(self):
+        return
         diffusion = 0.1
         x = sp.random.randint(self.size[0])
         y = sp.random.randint(self.size[1])

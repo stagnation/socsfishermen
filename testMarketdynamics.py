@@ -4,7 +4,7 @@ import scipy as sp
 import random as rnd
 from utils import *
 #import sciy.vectorize
-#from matplotlib2tikz import save as tikz_save      #If export to tikz should be used
+from matplotlib2tikz import save as tikz_save      #If export to tikz should be used
 
 from sea import *
 from marketAlt import *
@@ -19,7 +19,7 @@ if __name__ == '__main__':
     capacity = 1
     allee = 0.1
     cap_mat = capacity * sp.ones((num_fish_species,xsize,ysize))
-    cap_mat[1] = sp.array([[1e-6, 1e-6],[0.1,1e-6]])
+    cap_mat[1] = sp.array([[1e-6, 1e-6],[1,1e-6]])
     #cap_mat += 0.1 * ( sp.random.random(cap_mat.shape) - 0.5 )
     allee_effect = 0.1;
     growth_rate = 0.1
@@ -30,7 +30,7 @@ if __name__ == '__main__':
 
     harvest_fractions = 0.1     #Fish at MSY for large population
 
-    days = 1000
+    days = 560
 
     fish_population_log = sp.zeros((num_fish_species,xsize*ysize, days))
     fisherman_wealth_log = sp.zeros((num_fishermans, days))
@@ -62,6 +62,9 @@ if __name__ == '__main__':
     #Plot the result
     plot_fishpop(fish_population_log)
     plt.figure()
+    tikz_save('modeldynamic2.tikz',        #Exporting the figure to tikz format (latex image)
+        figureheight = '\\figureheight',
+        figurewidth = '\\figurewidth')
     if False:
         for i in range(num_fishermans):
             plt.plot(sp.arange(0, days), fisherman_wealth_log[i], label = 'Fisherman ' + str(i+1))
@@ -75,9 +78,9 @@ if __name__ == '__main__':
     plt.ylabel('Price')
     plt.legend()
 
-    #tikz_save('modeldynamic2.tikz',        #Exporting the figure to tikz format (latex image)
-    #       figureheight = '\\figureheight',
-    #       figurewidth = '\\figurewidth')
+    tikz_save('modeldynamic2.tikz',        #Exporting the figure to tikz format (latex image)
+        figureheight = '\\figureheight',
+        figurewidth = '\\figurewidth')
 
 
     plt.show()
