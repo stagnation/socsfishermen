@@ -211,14 +211,15 @@ def std_cap6():
        [  1.00000100e+00,   1.00000000e-06,   1.00000000e-06,
           1.00000000e-06,   1.00000000e-06,   1.00000000e-06]])]
 
-def crisscross_mat(capacity, size):
+def crisscross_mat(capacity, size, lowvalue = 0.1):
     cap_mat = capacity * sp.ones(size)
-    for i in range(size[0]):
-        if i%2==1:
-            cap_mat[i,:] = 0.1
-    for i in range(size[1]):
-        if i%2==1:
-            cap_mat[:,i] = 0.1
+    if size.__len__()==2:
+        for i in range(size[0]):
+            if i%2==1:
+                cap_mat[i,:] = lowvalue
+        for i in range(size[1]):
+            if i%2==1:
+                cap_mat[:,i] = lowvalue
     return cap_mat
 
 
