@@ -1,7 +1,8 @@
 import scipy as sp
 
 class Fisherman:
-    def __init__(self, x , y, price_perception, harvest_fraction=0.3, threshold=0, greed=0):
+    def __init__(self, x , y, price_perception, harvest_fraction, threshold, greed, level):
+        self.level = level
         #not sensible default values at the moment
         self.x = x
         self.y = y
@@ -56,7 +57,7 @@ class Fisherman:
 
     def move_to_best(self):
         if len(self.perception_of_fishpopulation_value) > 0:
-            bestFishingSite = max(self.perception_of_fishpopulation_value, key=lambda item:item[2])
+            bestFishingSite = max(self.perception_of_fishpopulation_value, key=lambda item:item[2])   
             #If he thinks the current location is best he will remain, is this correct???
             self.move(bestFishingSite[0])
             self.current_fishing_tactic = bestFishingSite

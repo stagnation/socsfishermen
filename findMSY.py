@@ -12,13 +12,13 @@ import matplotlib.pyplot as plt
 import scipy as sp
 import numpy as np
 import random as rnd
-from matplotlib2tikz import save as tikz_save
+#from matplotlib2tikz import save as tikz_save
 from utils import *
 from sea import *
 
 if __name__ == '__main__':
     num_of_rates = 50
-    days = 5000
+    days = 500
 
     xsize = 1
     ysize = 1
@@ -38,9 +38,11 @@ if __name__ == '__main__':
     catch_log = sp.zeros(num_of_rates)
     maximum_catch = 0
     maximum_harvest_fraction = 0
+    level = [0]
+    vary = False
 
     for k in range(num_of_rates):
-        s = Sea((xsize, ysize), num_fishermans , harvest_fractions[k] , thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee, fisher_behavior)
+        s = Sea((xsize, ysize), num_fishermans , harvest_fractions[k] , thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee, fisher_behavior, vary, level)
         for day in range(days):
             s.day_dynamics()
 
@@ -56,14 +58,14 @@ if __name__ == '__main__':
     fish_population_log = sp.zeros((4,days))
     initial_pop = 0.8
     for k in range(2):
-        s = Sea((xsize, ysize), num_fishermans , intrest_harvest_fractions[k] ,  thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee, fisher_behavior)
+        s = Sea((xsize, ysize), num_fishermans , intrest_harvest_fractions[k] ,  thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee, fisher_behavior, vary, level)
         for day in range(days):
             tmp = s.fishes_list[0].population
             fish_population_log[k][day] = tmp[0][0]
             s.day_dynamics()
     initial_pop = 0.2
     for k in range(2,4):
-        s = Sea((xsize, ysize), num_fishermans , intrest_harvest_fractions[k-2] ,  thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee, fisher_behavior)
+        s = Sea((xsize, ysize), num_fishermans , intrest_harvest_fractions[k-2] ,  thresholds, greeds,  fish_species, growth_rate, initial_pop, capacity, allee, fisher_behavior, vary, level)
         for day in range(days):
             tmp = s.fishes_list[0].population
             fish_population_log[k][day] = tmp[0][0]
@@ -84,9 +86,9 @@ if __name__ == '__main__':
     ax2.plot(harvest_fractions,catch_log)
     ax2.set_ylabel('Average Catch')
     ax2.set_xlabel('Harvest fraction')
-    tikz_save('modeldynamic2.tikz',        #Exporting the figure to tikz format (latex image)
-           figureheight = '\\figureheight',
-           figurewidth = '\\figurewidth')
+    #tikz_save('modeldynamic2.tikz',        #Exporting the figure to tikz format (latex image)
+    #       figureheight = '\\figureheight',
+    #       figurewidth = '\\figurewidth')
     enlarge_limits()
     #plt.savefig("figs/example_figure %s %s %s.png" %(days, num_of_rates, sailor_count), bbox_inches='tight')
     plt.show()

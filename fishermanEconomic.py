@@ -3,6 +3,7 @@ import scipy as sp
 class FishermanVaryHarvest:
     def __init__(self, x , y, price_perception, harvest_fraction=0.3, threshold=0, greed=0):
         #not sensible default values at the moment
+        print('not done do not use')
         self.x = x
         self.y = y
         self.harvest_fraction = harvest_fraction
