@@ -7,14 +7,14 @@ def discrete_trajectory(vector, allowed_directions = [(-1, 0), (0, -1), (0, 1), 
     dot_products = [ sp.dot( vector, d)  for d in allowed_directions ]
     max_idx = dot_products.index(max(dot_products))
     return allowed_directions[max_idx]
-    
+
 def is_extinct(fish_population):
     extinction_limit =1e-5
     days = fish_population.shape[0]
     for day in range(days):
         if fish_population[day]<extinction_limit:
             return day+1
-    return days    
+    return days
 
 def neighborhood_tuples(x, y, side_length):
     #from -floor(side_lngth / 2) to this plus side_length
@@ -35,7 +35,7 @@ def enlarge_limits(ax=None, s=0.03):
         dy = ymax - ymin
         ax.set_xlim([xmin - s*dx, xmax + s*dx])
         ax.set_ylim([ymin - s*dy, ymax + s*dy])
-        
+
 def zero_limits(ax=None, s=0.03):
     #courtesy of Pontus Granstrom
         if not ax:
@@ -45,22 +45,22 @@ def zero_limits(ax=None, s=0.03):
         dx = xmax - xmin
         dy = ymax - ymin
         ax.set_xlim([0, xmax + s*dx])
-        ax.set_ylim([0, ymax + s*dy])        
+        ax.set_ylim([0, ymax + s*dy])
 
 def random_like(mat):
     return sp.random(mat.shape)
-    
+
 def save_in_slices(name, data):
     with file(name, 'w') as outfile:
         outfile.write('# Array shape: {0}\n'.format(data.shape))
         for slice1 in data:
             for slice2 in slice1:
                 # the values in left-justified columns 7 characters in width
-                # with 2 decimal places.  
+                # with 2 decimal places.
                 sp.savetxt(outfile, slice2)#, fmt='%-7.2f')
                 outfile.write('# New slice\n')
-        
-    
+
+
 def std_cap10():
     return [sp.array([[  5.00001000e-01,   5.00001000e-01,   5.00001000e-01,
           5.00001000e-01,   5.00001000e-01,   5.00001000e-01,
@@ -185,7 +185,7 @@ def std_cap7():
        [  1.00000000e-06,   5.00001000e-01,   1.00000000e-06,
           5.00001000e-01,   1.00000000e-06,   1.00000000e-06,
           1.00000000e-06]])]
-          
+
 def std_cap6():
     return [sp.array([[  1.00000100e+00,   1.00000100e+00,   1.00000100e+00,
           1.00000100e+00,   1.00000100e+00,   1.00000100e+00],
@@ -213,17 +213,15 @@ def std_cap6():
 
 def crisscross_mat(capacity, size):
     cap_mat = capacity * sp.ones(size)
-    cap_mat[1,:] = 0.1
-    cap_mat[:,1] = 0.1
-    cap_mat[3,:] = 0.1
-    cap_mat[:,3] = 0.1
-    cap_mat[5,:] = 0.1
-    cap_mat[:,5] = 0.1
-    cap_mat[5,:] = 0.1
-    cap_mat[:,5] = 0.1
+    for i in range(size[0]):
+        if i%2==1:
+            cap_mat[i,:] = 0.1
+    for i in range(size[1]):
+        if i%2==1:
+            cap_mat[:,i] = 0.1
     return cap_mat
-    
-    
+
+
 #def fish_sum(fishes):
 #    r = 0
 #    for x in range(len(fishes)):
@@ -238,7 +236,7 @@ if __name__ == '__main__':
     y = 10
     side_length = 3
     print(neighborhood_tuples(x, y, side_length))
-    
+
     extinction_log = sp.zeros((4, 2, 3, 10))
     timestamp = time.strftime("%d_%m_%Y_%H:%M:%S", time.gmtime())
     save_in_slices("data/extinction%s.csv" % (timestamp), extinction_log)
