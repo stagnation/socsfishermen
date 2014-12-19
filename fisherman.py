@@ -3,14 +3,12 @@ import scipy as sp
 class Fisherman:
     def __init__(self, x , y, price_perception, harvest_fraction, threshold, greed, level):
         self.level = level
-        #not sensible default values at the moment
         self.x = x
         self.y = y
         self.harvest_fraction = harvest_fraction
         self.greed = greed
         self.catch = (0,0)          #(spice,amount)
         self.wealth = 0
-        self.maximum_yield = 1 #we don't use this yet
         self.price_perception = price_perception
         self.threshold = threshold
         self.perception_of_fishpopulation_value = [((x,y),0,0)]
@@ -28,14 +26,13 @@ class Fisherman:
             if (item[0]==pos_tup) & (item[1]==specie) :
                 self.perception_of_fishpopulation_value.remove(item)
                 break
-        #Add new knowledge
+            #Add new knowledge
         self.perception_of_fishpopulation_value.append((pos_tup, specie, precived_value))
 
     def throw_net(self, site_fish_population):
-        #Greedy always want to fish at the best location!
-        #bestFishingSite = self.move_to_best()
-
         specie = self.current_fishing_tactic[1]
+
+
 
         #only fish from one fish species
         caught = 0
@@ -57,7 +54,7 @@ class Fisherman:
 
     def move_to_best(self):
         if len(self.perception_of_fishpopulation_value) > 0:
-            bestFishingSite = max(self.perception_of_fishpopulation_value, key=lambda item:item[2])   
+            bestFishingSite = max(self.perception_of_fishpopulation_value, key=lambda item:item[2])
             #If he thinks the current location is best he will remain, is this correct???
             self.move(bestFishingSite[0])
             self.current_fishing_tactic = bestFishingSite
