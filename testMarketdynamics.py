@@ -11,15 +11,62 @@ from marketAlt import *
 from plotTool import *
 
 if __name__ == '__main__':
-    xsize = 2
-    ysize = 2
-    num_fishermans = 2
-    num_fish_species = 2
-    initial_pop = 0.5
-    capacity = 1
+    print('Setting 1: one common, one rare specie, small grid')
+    print('Setting 2: one common, one crisscross, large grid')
+    print('Setting 3: one common, rare one crisscross, large grid')
+    print('Setting 4: multiple differnet species, large grid')
+
+    setting = int(input("Enter setting (1-4): "))
+
+    if setting ==1:
+        xsize = 2
+        ysize = 2
+        capacity = 1
+        num_fishermans = 2
+        num_fish_species = 2
+        cap_mat = capacity * sp.ones((num_fish_species,xsize,ysize))
+        cap_mat[1] = sp.array([[1e-6, 1e-6],[1,1e-6]])
+        harvest_fractions = 0.1
+        days = 500
+    elif setting==2:
+        xsize = 6
+        ysize = 6
+        capacity = 1
+        num_fishermans = 15
+        num_fish_species = 2
+        cap_mat = capacity * sp.ones((num_fish_species,xsize,ysize))
+        cap_mat[1] = crisscross_mat(capacity,(xsize,ysize))
+        harvest_fractions = 0.25
+        days = 1000
+    elif setting==3:
+        xsize = 6
+        ysize = 6
+        capacity = 1
+        num_fishermans = 12
+        num_fish_species = 2
+        cap_mat = capacity * sp.ones((num_fish_species,xsize,ysize))
+        cap_mat[1] = crisscross_mat(capacity,(xsize,ysize),1e-6)
+        harvest_fractions = 0.20
+        days = 1000
+    elif setting==4:
+        xsize = 4
+        ysize = 4
+        capacity = 1
+        num_fishermans = 12
+        num_fish_species = 4
+        cap_mat = capacity * sp.ones((num_fish_species,xsize,ysize))
+        cap_mat[1] = crisscross_mat(capacity,(xsize,ysize),1e-6)
+        cap_mat[2] = sp.rand(xsize,ysize)
+        cap_mat[2] = crisscross_mat(capacity,(xsize,ysize))
+        harvest_fractions = 0.20
+        days = 500
+    else:
+        print('Invalid input, Termiates')
+        exit()
+    initial_pop = 0.8
+
     allee = 0.1
-    cap_mat = capacity * sp.ones((num_fish_species,xsize,ysize))
-    cap_mat[1] = sp.array([[1e-6, 1e-6],[1,1e-6]])
+
     #cap_mat += 0.1 * ( sp.random.random(cap_mat.shape) - 0.5 )
     allee_effect = 0.1;
     growth_rate = 0.1
@@ -28,9 +75,6 @@ if __name__ == '__main__':
     #intial_price = (0.1,0.2,0.1)
     #market_demand = (0.12,0.4,0.12) not used with the other market dynamics
 
-    harvest_fractions = 0.1     #Fish at MSY for large population
-
-    days = 500
 
     fish_population_log = sp.zeros((num_fish_species,xsize*ysize, days))
     fisherman_wealth_log = sp.zeros((num_fishermans, days))
@@ -61,27 +105,47 @@ if __name__ == '__main__':
 
 
     #Plot the result
-    plot_fishpop(fish_population_log)
-    plt.figure()
-    tikz_save('modeldynamic2.tikz',        #Exporting the figure to tikz format (latex image)
-        figureheight = '\\figureheight',
-        figurewidth = '\\figurewidth')
+    tikzsave = False
+    t = sp.arange(0, days)
+    if not(tikzsave):
+        plot_fishpop(fish_population_log)
+    else:
+        plt.figure()
+        n_species = fish_population_log.shape[0]
+        colvec = [plt.cm.winter(i) for i in sp.linspace(0, 0.9, n_species)]
+        n_pops = fish_population_log.shape[1]
+        days = fish_population_log.shape[2]
+        for i in range(n_species):
+            masked_pops = sp.ma.masked_equal(fish_population_log[i], 0)
+            avg_fishpop = sp.mean(masked_pops, axis=0)
+            plt.plot(t,avg_fishpop, label = 'Specie '+ str(i+1))
+        plt.xlabel('Time')
+        plt.ylabel('Fish population')
+        plt.legend()
+        tikz_save('fishpopmarket.tikz',        #Exporting the figure to tikz format (latex image) Doesn't work for some reason
+            figureheight = '\\figureheight',
+            figurewidth = '\\figurewidth')
+
+
+
     if False:
+        plt.figure()
         for i in range(num_fishermans):
-            plt.plot(sp.arange(0, days), fisherman_wealth_log[i], label = 'Fisherman ' + str(i+1))
+            plt.plot(t, fisherman_wealth_log[i], label = 'Fisherman ' + str(i+1))
         plt.xlabel('Time')
         plt.ylabel('Total Wealth')
         plt.legend()
-        plt.figure()
+
+    plt.figure()
     for i in range(num_fish_species):
-        plt.semilogy(sp.arange(0, days), price_log[i], label = 'Specie ' + str(i+1))
+        plt.semilogy(t, price_log[i], label = 'Specie ' + str(i+1))
     plt.xlabel('Time')
     plt.ylabel('Price')
     plt.legend()
-
-    tikz_save('modeldynamic2.tikz',        #Exporting the figure to tikz format (latex image)
-        figureheight = '\\figureheight',
-        figurewidth = '\\figurewidth')
+    if tikzsave:
+        tikz_save('pricemarket.tikz',        #Exporting the figure to tikz format (latex image)
+            figureheight = '\\figureheight',
+            figurewidth = '\\figurewidth')
 
 
     plt.show()
