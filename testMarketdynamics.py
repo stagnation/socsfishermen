@@ -4,7 +4,10 @@ import scipy as sp
 import random as rnd
 from utils import *
 #import sciy.vectorize
-from matplotlib2tikz import save as tikz_save      #If export to tikz should be used
+
+tikzsave = False
+if tikzsave:
+    from matplotlib2tikz import save as tikz_save      #If export to tikz should be used
 
 from sea import *
 from marketAlt import *
@@ -105,7 +108,6 @@ if __name__ == '__main__':
 
 
     #Plot the result
-    tikzsave = False
     t = sp.arange(0, days)
     if not(tikzsave):
         plot_fishpop(fish_population_log)
