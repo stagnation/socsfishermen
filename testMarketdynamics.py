@@ -60,7 +60,7 @@ if __name__ == '__main__':
         cap_mat = capacity * sp.ones((num_fish_species,xsize,ysize))
         cap_mat[1] = crisscross_mat(capacity,(xsize,ysize),1e-6)
         cap_mat[2] = sp.rand(xsize,ysize)
-        cap_mat[2] = crisscross_mat(capacity,(xsize,ysize))
+        cap_mat[3] = crisscross_mat(capacity,(xsize,ysize))
         harvest_fractions = 0.20
         days = 500
     else:
@@ -109,8 +109,12 @@ if __name__ == '__main__':
 
     #Plot the result
     t = sp.arange(0, days)
-    if not(tikzsave):
+    if (tikzsave):
         plot_fishpop(fish_population_log)
+        tikz_save('fishpopmarket.tikz',        #Exporting the figure to tikz format (latex image) Doesn't work for some reason
+            figureheight = '\\figureheight',
+            figurewidth = '\\figurewidth')
+
     else:
         plt.figure()
         n_species = fish_population_log.shape[0]
@@ -124,9 +128,6 @@ if __name__ == '__main__':
         plt.xlabel('Time')
         plt.ylabel('Fish population')
         plt.legend()
-        tikz_save('fishpopmarket.tikz',        #Exporting the figure to tikz format (latex image) Doesn't work for some reason
-            figureheight = '\\figureheight',
-            figurewidth = '\\figurewidth')
 
 
 
