@@ -39,7 +39,8 @@ if __name__ == '__main__':
         num_fish_species = 2
         cap_mat = capacity * sp.ones((num_fish_species,xsize,ysize))
         cap_mat[1] = crisscross_mat(capacity,(xsize,ysize))
-        harvest_fractions = 0.25
+        print(cap_mat)
+        harvest_fractions = 0.1
         days = 1000
     elif setting==3:
         xsize = 6
@@ -52,10 +53,10 @@ if __name__ == '__main__':
         harvest_fractions = 0.20
         days = 1000
     elif setting==4:
-        xsize = 4
-        ysize = 4
+        xsize = 6
+        ysize = 6
         capacity = 1
-        num_fishermans = 12
+        num_fishermans = 8
         num_fish_species = 4
         cap_mat = capacity * sp.ones((num_fish_species,xsize,ysize))
         cap_mat[1] = crisscross_mat(capacity,(xsize,ysize),1e-6)
@@ -82,6 +83,7 @@ if __name__ == '__main__':
     fish_population_log = sp.zeros((num_fish_species,xsize*ysize, days))
     fisherman_wealth_log = sp.zeros((num_fishermans, days))
     price_log = sp.zeros((num_fish_species,days))
+    fishing_regime_log=sp.zeros((num_fish_species,days))
     level = sp.zeros(num_fishermans)
 
     s = Sea((xsize, ysize), num_fishermans, harvest_fractions, 0, 0, num_fish_species, growth_rate, initial_pop, cap_mat, allee, fisher_behavior, level)
@@ -90,6 +92,12 @@ if __name__ == '__main__':
 
     for day in range(days):
         s.day_dynamics()
+        fishermen_targets=sp.zeros(num_fish_species)
+        for sailor in s.fishermans_list:
+            #print(sailor.catch)
+            fishermen_targets[sailor.catch[0]]+=1/num_fishermans
+        #print(fishermen_targets)
+        fishing_regime_log[:,day]=fishermen_targets
         market.sell(s.fishermans_list)
 
         for i,price in enumerate(market.price):
@@ -108,6 +116,7 @@ if __name__ == '__main__':
 
 
     #Plot the result
+    print(fishing_regime_log)
     t = sp.arange(0, days)
     if (tikzsave):
         plot_fishpop(fish_population_log)
@@ -151,4 +160,7 @@ if __name__ == '__main__':
             figurewidth = '\\figurewidth')
 
 
+    plt.figure()
+    for i in range(num_fish_species):
+        plt.plot(range(days),fishing_regime_log[i])
     plt.show()
